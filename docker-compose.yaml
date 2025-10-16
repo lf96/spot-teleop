@@ -81,7 +81,7 @@ services:
         echo 'Updating package lists...' &&
         apt-get update &&
         echo 'Installing dependencies...' &&
-        'rosdep install --from-paths src --ignore-src -r -y --rosdistro humble' &&
+        rosdep install --from-paths src --ignore-src -r -y --rosdistro humble &&
         echo 'ZED workspace setup...' &&
         if [ -f /home/spot-teleop/zed_ws/install/setup.bash ]; then
           echo 'Found existing build, sourcing setup...' &&

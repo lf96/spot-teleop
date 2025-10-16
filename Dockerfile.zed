@@ -12,27 +12,26 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Use bash shell for RUN commands (to allow 'source' command)
 SHELL ["/bin/bash", "-lc"]
 
-# Install base build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl gnupg2 lsb-release ca-certificates software-properties-common \
-    build-essential cmake ninja-build \
-    git git-lfs \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Add ROS 2 repository (without legacy apt-key)
-RUN install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-    -o /etc/apt/keyrings/ros-archive-keyring.gpg && \
+# Add ROS 2 Humble repository
+RUN apt-get update && apt-get install -y curl gnupg2 lsb-release && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+        -o /etc/apt/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/ros-archive-keyring.gpg] \
-    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
-    | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+        http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+        | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ros-humble-desktop python3-rosdep python3-colcon-common-extensions python3-vcstool \
+        ros-humble-ament-cmake-auto && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install ROS 2 Humble and development tools (colcon, vcstool, rosdep, etc.)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-humble-desktop ros-dev-tools \
-    ros-humble-ament-cmake-auto \
-    && rm -rf /var/lib/apt/lists/*
+# Initialize rosdep
+RUN rosdep init || true && rosdep fix-permissions && rosdep update
+
+# Source ROS setup automatically for bash
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+
 
 # Setup workspace directory
 ENV WS=/home/spot_ws/zed_ws
@@ -78,6 +77,14 @@ RUN set -e; \
     apt-get install -y ./libnvvpi2_2.3.9_amd64.deb ./vpi2-dev_2.3.9_amd64.deb ./vpi2-samples_2.3.9_amd64.deb || \
     apt-get -f install -y && \
     rm -f *.deb
+
+# Install dependencies
+RUN apt-get update && apt-get install -y git && \
+    pip install setuptools setuptools_scm wheel warp-lang ninja numpy-2.2.6 scipy-1.15.3 trimesh-4.8.3 yourdfpy
+
+# Install PyTorch (CUDA 12.x compatible)
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
 
 # Set working directory
 WORKDIR $WS

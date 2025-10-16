@@ -54,3 +54,15 @@
 [submodule "isaac-sim_ws/zed-isaac-sim"]
 	path = isaac-sim_ws/zed-isaac-sim
 	url = https://github.com/stereolabs/zed-isaac-sim.git
+[submodule "zed_ws/src/isaac_manipulator"]
+	path = zed_ws/src/isaac_manipulator
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_manipulator
+[submodule "zed_ws/src/isaac_ros_cumotion"]
+	path = zed_ws/src/isaac_ros_cumotion
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion
+[submodule "zed_ws/src/isaac_ros_dnn_stereo_depth"]
+	path = zed_ws/src/isaac_ros_dnn_stereo_depth
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_dnn_stereo_depth
+[submodule "zed_ws/src/isaac_ros_pose_estimation"]
+	path = zed_ws/src/isaac_ros_pose_estimation
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_pose_estimation
