@@ -1,0 +1,13 @@
+# Arquivos grandes (>100MB) - rosbag, onnx, mcap, tar.gz
+
+# Isaac ROS NVBlox
+zed_ws/isaac_ros_assets/isaac_ros_nvblox/quickstart/rosbag2_2024_04_04-15_44_33_0.db3
+
+# DNN Stereo Disparity
+zed_ws/isaac_ros_assets/models/dnn_stereo_disparity/dnn_stereo_disparity_v4.1.0_onnx.tar.gz
+
+# R2B datasets
+zed_ws/isaac_ros_assets/r2b_2024/r2b_galileo/r2b_galileo_0.mcap
+zed_ws/isaac_ros_assets/r2b_2024/r2b_galileo2/r2b_galileo2_0.mcap
+zed_ws/isaac_ros_assets/r2b_2024/r2b_robotarm/r2b_robotarm_0.mcap
+zed_ws/isaac_ros_assets/r2b_2024/r2b_whitetunnel/r2b_whitetunnel_0.mcap
