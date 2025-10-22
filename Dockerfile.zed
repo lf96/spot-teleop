@@ -79,11 +79,13 @@ RUN set -e; \
     rm -f *.deb
 
 # Install dependencies
-RUN apt-get update && apt-get install -y git && \
-    pip install setuptools setuptools_scm wheel warp-lang ninja numpy-2.2.6 scipy-1.15.3 trimesh-4.8.3 yourdfpy
+RUN apt-get update && apt-get install -y git curl wget build-essential
+
+RUN pip install --upgrade pip "setuptools<80" wheel && \
+    pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy
 
 # Install PyTorch (CUDA 12.x compatible)
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+RUN pip install --no-cache-dir --ignore-installed torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 
 # Set working directory
