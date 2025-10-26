@@ -63,3 +63,7 @@
 [submodule "zed_ws/src/isaac_ros_pose_estimation"]
 	path = zed_ws/src/isaac_ros_pose_estimation
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_pose_estimation
+[submodule "spot-ros2_ws/src/isaac_ros_cumotion"]
+	path = spot-ros2_ws/src/isaac_ros_cumotion
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion.git
+	branch = release-3.2
