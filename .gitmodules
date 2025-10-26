@@ -67,3 +67,6 @@
 	path = spot-ros2_ws/src/isaac_ros_cumotion
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion.git
 	branch = release-3.2
+[submodule "spot-ros2_ws/src/isaac_ros_common"]
+	path = spot-ros2_ws/src/isaac_ros_common
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
