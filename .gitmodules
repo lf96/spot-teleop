@@ -34,7 +34,6 @@
 [submodule "spot-ros2_ws/src/moveit_msgs"]
 	path = spot-ros2_ws/src/moveit_msgs
 	url = https://github.com/ros-planning/moveit_msgs.git
-	branch = refs/tags/2.2.1
 
 [submodule "spot-ros2_ws/src/moveit_resources"]
 	path = spot-ros2_ws/src/moveit_resources
