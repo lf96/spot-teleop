@@ -57,9 +57,6 @@
 [submodule "zed_ws/src/isaac_manipulator"]
 	path = zed_ws/src/isaac_manipulator
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_manipulator
-[submodule "zed_ws/src/isaac_ros_cumotion"]
-	path = zed_ws/src/isaac_ros_cumotion
-	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion
 [submodule "zed_ws/src/isaac_ros_dnn_stereo_depth"]
 	path = zed_ws/src/isaac_ros_dnn_stereo_depth
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_dnn_stereo_depth
