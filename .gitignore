@@ -14,3 +14,12 @@ zed_ws/isaac_ros_assets/r2b_2024/r2b_whitetunnel/r2b_whitetunnel_0.mcap
 
 cleanup_large_files_auto.sh
 cleanup_push.sh
+
+# Build Folders
+
+*/install/
+*/build/
+*/log/
+
+# Cache files
+*/__pycache__/

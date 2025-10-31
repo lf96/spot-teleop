@@ -12,26 +12,73 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Use bash shell for RUN commands (to allow 'source' command)
 SHELL ["/bin/bash", "-lc"]
 
-# Add ROS 2 Humble repository
-RUN apt-get update && apt-get install -y curl gnupg2 lsb-release && \
-    mkdir -p /etc/apt/keyrings && \
-    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-        -o /etc/apt/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/ros-archive-keyring.gpg] \
-        http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
-        | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ros-humble-desktop python3-rosdep python3-colcon-common-extensions python3-vcstool \
-        ros-humble-ament-cmake-auto && \
-    rm -rf /var/lib/apt/lists/*
+# ---------- ROS 2 Humble + rosdep OFFLINE [Git Outage Oct-25] ----------
+### 1) Pré-reqs de sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates curl gnupg lsb-release locales \
+      build-essential git python3-pip python3-venv \
+      libboost-all-dev \
+    && locale-gen en_US.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Initialize rosdep
-RUN rosdep init || true && rosdep fix-permissions && rosdep update
+### 2) Repositório APT do ROS 2
+RUN set -eux; \
+    UBUNTU_CODENAME=$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}}); \
+    ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | \
+      awk -F'"' '/tag_name/{print $4}'); \
+    curl -L -o /tmp/ros2-apt-source.deb \
+      "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.${UBUNTU_CODENAME}_all.deb"; \
+    dpkg -i /tmp/ros2-apt-source.deb; \
+    rm -f /tmp/ros2-apt-source.deb; \
+    apt-get update
 
-# Source ROS setup automatically for bash
-RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+### 3) ROS mínimo para ZED
+RUN apt-get install -y --no-install-recommends \
+      ros-humble-ros-base \
+      ros-humble-image-transport \
+      ros-humble-camera-info-manager \
+      ros-humble-compressed-image-transport \
+      ros-humble-diagnostic-updater \
+      ros-humble-rviz2 \
+      ros-humble-vision-msgs \
+      ros-humble-foxglove-msgs \
+      ros-humble-nmea-msgs \
+      ros-humble-navigation2 \
+      ros-humble-geographic-msgs \
+      ros-humble-backward-ros \
+      ros-humble-robot-localization \
+      ros-humble-point-cloud-transport \
+      ros-humble-xacro \
+      ros-humble-robot-state-publisher \
+      ros-humble-joint-state-publisher \
+      ros-humble-robot-localization \
+      ros-humble-point-cloud-transport \
+    && rm -rf /var/lib/apt/lists/*
 
+### 4) rosdep/colcon/vcstool via PyPI (evita dependência de pacotes Ubuntu/GitHub)
+RUN python3 -m pip install --no-cache-dir --upgrade pip \
+ && python3 -m pip install --no-cache-dir \
+      rosdep vcstool colcon-common-extensions
+
+### 5) rosdep OFFLINE: apontar para YAMLs locais (vendorizados)
+COPY third_party/rosdistro/ /opt/rosdistro/
+ENV ROSDISTRO_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
+# (Opcional, redundante, mas ajuda em ambientes custom)
+ENV ROSDEP_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
+RUN set -eux; \
+    mkdir -p /etc/ros/rosdep/sources.list.d; \
+    rm -f /etc/ros/rosdep/sources.list.d/*.list; \
+    printf '%s\n' \
+      'yaml file:///opt/rosdistro/rosdep/base.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/python.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/ruby.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/osx-homebrew.yaml' \
+      > /etc/ros/rosdep/sources.list.d/20-default.list; \
+    rosdep update
+    
+### Source ROS
+RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && \
+    echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc
 
 # Setup workspace directory
 ENV WS=/home/spot_ws/zed_ws
@@ -81,11 +128,20 @@ RUN set -e; \
 # Install dependencies
 RUN apt-get update && apt-get install -y git curl wget build-essential
 
-RUN pip install --upgrade pip "setuptools<80" wheel && \
-    pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy
+RUN pip install --upgrade pip "setuptools==69.5.1" "wheel>=0.43" && \
+    pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy && \
+    pip install --no-cache-dir --upgrade "sympy>=1.12" "mpmath>=1.3.0" --ignore-installed
 
 # Install PyTorch (CUDA 12.x compatible)
 RUN pip install --no-cache-dir --ignore-installed torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Install TensorRT
+RUN apt-get update && apt-get install -y \
+    libnvinfer-dev=8.6.1.6-1+cuda12.0 \
+    libnvinfer-headers-plugin-dev=8.6.1.6-1+cuda12.0 \
+    libnvinfer-plugin-dev=8.6.1.6-1+cuda12.0 \
+    libnvonnxparsers-dev=8.6.1.6-1+cuda12.0 \
+    libnvparsers-dev=8.6.1.6-1+cuda12.0
 
 
 # Set working directory

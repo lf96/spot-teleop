@@ -1,5 +1,5 @@
 # Use official Ubuntu 22.04 base image
-FROM ubuntu:22.04
+FROM nvidia/cuda:12.8.1-devel-ubuntu22.04
 
 # Set noninteractive mode for APT
 ENV DEBIAN_FRONTEND=noninteractive
@@ -20,12 +20,26 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs
 
-# Add ROS 2 apt repository
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
-    http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" \
-    | tee /etc/apt/sources.list.d/ros2.list > /dev/null \
-    && apt-get update
+# Pré-reqs básicos
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl gnupg lsb-release && rm -rf /var/lib/apt/lists/*
+
+# Limpa qualquer configuração antiga de ROS (evita conflito de chaves/listas)
+RUN rm -f /etc/apt/sources.list.d/ros2.list \
+    && rm -f /usr/share/keyrings/ros-archive-keyring.gpg
+
+# Instala o pacote que configura repo + chave GPG do ROS 2
+RUN set -eux; \
+    export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | \
+        grep -F "tag_name" | awk -F\" '{print $4}'); \
+    curl -L -o /tmp/ros2-apt-source.deb \
+        "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"; \
+    dpkg -i /tmp/ros2-apt-source.deb; \
+    rm -f /tmp/ros2-apt-source.deb
+
+# Atualiza índices após configurar o repositório
+RUN apt-get update
+
 
 # Add Intel RealSense repository (with lsb-release)
 RUN apt-get update && apt-get install -y \
@@ -39,6 +53,12 @@ RUN apt-get update && apt-get install -y \
 # Install dependencies
 RUN apt-get update -q && \
     apt-get install -yq --no-install-recommends \
+    # Ferramentas de build
+    build-essential cmake ninja-build git \
+    # Ament (CMake + módulo Python) — corrige "No module named 'ament_package'"
+    ros-humble-ament-cmake \
+    libeigen3-dev libyaml-cpp-dev \
+    python3-ament-package \
     wget \ 
     software-properties-common \ 
     python3-pip \
@@ -67,17 +87,40 @@ RUN apt-get update -q && \
     ros-humble-controller-interface \
     ros-humble-hardware-interface \
     ros-humble-forward-command-controller \
+    # Moveit packages
+    ros-humble-moveit \
+    ros-humble-moveit-common \
+    ros-humble-moveit-msgs \
+    ros-humble-moveit-resources \
+    ros-humble-moveit-ros-planning \
+    ros-humble-moveit-ros-move-group \
+    ros-humble-moveit-plugins \
+    ros-humble-moveit-ros-perception \
     # RealSense packages
     udev usbutils \
     librealsense2-utils librealsense2-dev librealsense2-dbg \
     ros-humble-realsense2-camera ros-humble-realsense2-description \
     && rm -rf /var/lib/apt/lists/*
 
+
+### 5) rosdep OFFLINE: apontar para YAMLs locais (vendorizados)
+COPY third_party/rosdistro/ /opt/rosdistro/
+ENV ROSDISTRO_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
+# (Opcional, redundante, mas ajuda em ambientes custom)
+ENV ROSDEP_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
+RUN set -eux; \
+    mkdir -p /etc/ros/rosdep/sources.list.d; \
+    rm -f /etc/ros/rosdep/sources.list.d/*.list; \
+    printf '%s\n' \
+      'yaml file:///opt/rosdistro/rosdep/base.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/python.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/ruby.yaml' \
+      'yaml file:///opt/rosdistro/rosdep/osx-homebrew.yaml' \
+      > /etc/ros/rosdep/sources.list.d/20-default.list; \
+    rosdep update
+
 # Set up workspace
 WORKDIR /home/spot-teleop/spot-ros2_ws
-
-# Initialize rosdep
-RUN rosdep init && rosdep update
 
 # Copy source code
 COPY spot-ros2_ws/src /home/spot-teleop/spot-ros2_ws/src
@@ -94,7 +137,25 @@ ENV USER=root
 
 # Create bashrc with ROS setup
 RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && \
-    echo 'source /home/spot-teleop/spot-ros2_ws/install/setup.bash' >> /root/.bashrc
+    echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc
+    
+# Install VPI (Vision Programming Interface) packages
+RUN set -e; \
+    cd /tmp && \
+    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/libn/libnvvpi2/libnvvpi2_2.3.9_amd64.deb && \
+    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-dev/vpi2-dev_2.3.9_amd64.deb && \
+    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-samples/vpi2-samples_2.3.9_amd64.deb && \
+    apt-get install -y ./libnvvpi2_2.3.9_amd64.deb ./vpi2-dev_2.3.9_amd64.deb ./vpi2-samples_2.3.9_amd64.deb || \
+    apt-get -f install -y && \
+    rm -f *.deb
+    
+RUN pip install --upgrade pip "setuptools==69.5.1" "wheel>=0.43" && \
+    pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy && \
+    pip install --no-cache-dir --upgrade "sympy>=1.12" "mpmath>=1.3.0" --ignore-installed && \
+    pip install bosdyn-api==5.0.1.2 bosdyn-client==5.0.1.2 bosdyn-core==5.0.1.2 bosdyn-mission==5.0.1.2 bosdyn-choreography-client==5.0.1.2
+
+# Install PyTorch (CUDA 12.x compatible)
+RUN pip install --no-cache-dir --ignore-installed torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Set default command
 CMD ["/bin/bash"]
