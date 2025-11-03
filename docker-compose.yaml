@@ -27,7 +27,7 @@ services:
         echo 'Updating package lists...' &&
         apt-get update &&
         echo 'Installing dependencies...' &&
-        rosdep install --from-paths src --ignore-src -r -y --rosdistro humble &&
+        #rosdep install --from-paths src --ignore-src -r -y --rosdistro humble --skip-keys="ros-humble-warehouse-ros-mongo" &&
         if [ -f /home/spot-teleop/spot-ros2_ws/install/setup.bash ]; then
           echo 'Found existing build, sourcing setup...' &&
           source /home/spot-teleop/spot-ros2_ws/install/setup.bash
