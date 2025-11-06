@@ -1,6 +1,6 @@
 import os
 from ament_index_python.packages import get_package_share_directory
-import os
+
 import yaml
 from launch import LaunchDescription
 from launch.actions import (
@@ -49,6 +49,32 @@ def launch_setup(context, *args, **kwargs):
             "control_only": "true" if sim else "false",
         }.items(),
     )
+    
+    # Iniciar o planejador cumotion
+    xrdf_path = PathJoinSubstitution([
+        FindPackageShare("spot_moveit_config"),
+        "config", "spot.xrdf"
+    ])
+    urdf_path = PathJoinSubstitution([
+        FindPackageShare("spot_moveit_config"),
+        "config", "spot.urdf"
+    ])
+    cumotion_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("isaac_ros_cumotion"),
+                "launch",
+                "isaac_ros_cumotion.launch.py",
+            ])
+        ),
+        launch_arguments={
+            # ajuste estes caminhos:
+            "cumotion_planner.robot":"",
+            "cumotion_planner.yml_file_path":"",
+            "cumotion_planner.content_path": xrdf_path,
+            "cumotion_planner.urdf_path": urdf_path,
+        }.items(),
+    )
 
     # --- Fase 2: Preparar as ações do MoveIt, que serão atrasadas ---
     # Primeiro, preparamos as configurações do MoveIt como antes
@@ -74,10 +100,40 @@ def launch_setup(context, *args, **kwargs):
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
-        parameters=[moveit_cfg.robot_description, {'ignore_timestamp': True, 'use_sim_time': True}],
+        parameters=[moveit_cfg.robot_description, {'ignore_timestamp': True}],
         remappings=remappings,
     )
-        
+    
+    
+    # Adicionar parametros para o pipeline do cumotion
+    cumotion_params = {
+       # torna cuMotion a pipeline padrão
+       'default_planning_pipeline': 'isaac_ros_cumotion',
+       # mantém OMPL como fallback/alternativa no RViz
+       'planning_pipelines': ['isaac_ros_cumotion', 'ompl'],
+
+       # seção própria da pipeline (nome do plugin + adapters + tunables)
+       'isaac_ros_cumotion': {
+            'planning_plugin': 'isaac_ros_cumotion_moveit/CumotionPlanner',
+            'request_adapters': ' '.join([
+                'default_planner_request_adapters/AddTimeOptimalParameterization',
+                'default_planner_request_adapters/ResolveConstraintFrames',
+                'default_planner_request_adapters/FixWorkspaceBounds',
+                'default_planner_request_adapters/FixStartStateBounds',
+                'default_planner_request_adapters/FixStartStateCollision',
+                'default_planner_request_adapters/FixStartStatePathConstraints',
+            ]),
+            'start_state_max_bounds_error': 0.1,
+            'path_tolerance': 0.01,
+            'resample_dt': 0.01,
+            'min_angle_change': 0.001,
+            'default_workspace_bounds': 10.0,
+            'jiggle_fraction': 0.05,
+            'max_sampling_attempts': 100,
+            'start_state_max_dt': 0.3,
+        }
+    }
+    
     # Adiciona de volta o move_group_node pro planning e interactive markers
     move_group_node = Node(
         package="moveit_ros_move_group",
@@ -85,7 +141,8 @@ def launch_setup(context, *args, **kwargs):
         name='move_group',
         output="screen",
         parameters=[
-                moveit_cfg.to_dict(), 
+                moveit_cfg.to_dict(),
+                cumotion_params,
                 {'wait_for_complete_state_timeout': 5.0, 'use_sim_time': True},
         ],
         remappings=remappings,
@@ -171,7 +228,9 @@ def launch_setup(context, *args, **kwargs):
         executable="rviz2",
         output="screen",
         arguments=["-d", PathJoinSubstitution([FindPackageShare("spot_moveit_config"), "config", "moveit.rviz"])],
-        parameters=[moveit_cfg.to_dict(), {'use_sim_time': True}],
+        parameters=[
+            moveit_cfg.to_dict(),
+        ],
         remappings=remappings,
     )
     
@@ -229,7 +288,7 @@ def launch_setup(context, *args, **kwargs):
     
     
     sim_group = GroupAction([
-        SetParameter(name='use_sim_time', value=True),
+        # SetParameter(name='use_sim_time', value=True),
         *sim_nodes,
     ])
 
@@ -237,6 +296,7 @@ def launch_setup(context, *args, **kwargs):
     wall_actions = [
         SetParameter(name='use_sim_time', value=False),
         ros2_control_launch,   # controller_manager e controladores em wall time
+        cumotion_launch
     ]
 
     wall_group = GroupAction(wall_actions)
