@@ -57,7 +57,7 @@ def launch_setup(context, *args, **kwargs):
     ])
     urdf_path = PathJoinSubstitution([
         FindPackageShare("spot_moveit_config"),
-        "config", "spot.urdf"
+        "config", "spot_arm.urdf"
     ])
     cumotion_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -68,11 +68,11 @@ def launch_setup(context, *args, **kwargs):
             ])
         ),
         launch_arguments={
-            # ajuste estes caminhos:
-            "cumotion_planner.robot":"",
-            "cumotion_planner.yml_file_path":"",
-            "cumotion_planner.content_path": xrdf_path,
+            "cumotion_planner.robot":xrdf_path,
             "cumotion_planner.urdf_path": urdf_path,
+            "cumotion_planner.joint_states_topic": "/joint_states_mapped",
+            "cumotion_planner.tool_frame": "arm_link_fngr",
+            "cumotion_planner.include_trajopt_retract_seed": "false",
         }.items(),
     )
 
@@ -171,7 +171,7 @@ def launch_setup(context, *args, **kwargs):
         get_package_share_directory("spot_operation_ros2")
         mapper_node = Node(
             package="spot_operation_ros2",
-            executable="joint_state_mapper_spot",
+            executable="joint_state_mapper",
             namespace="spot_sim",
             output="screen",
             parameters=[{'use_sim_time': True}],
