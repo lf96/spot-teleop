@@ -51,3 +51,6 @@
 [submodule "spot-ros2_ws/src/isaac_ros_nvblox"]
 	path = spot-ros2_ws/src/isaac_ros_nvblox
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nvblox.git
+[submodule "spot-ros2_ws/src/isaac_ros_nitros"]
+	path = spot-ros2_ws/src/isaac_ros_nitros
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros
