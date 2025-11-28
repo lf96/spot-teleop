@@ -54,3 +54,6 @@
 [submodule "spot-ros2_ws/src/isaac_ros_nitros"]
 	path = spot-ros2_ws/src/isaac_ros_nitros
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros
+[submodule "spot-ros2_ws/src/isaac_ros_apriltag"]
+	path = spot-ros2_ws/src/isaac_ros_apriltag
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_apriltag.git
