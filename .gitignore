@@ -1,5 +1,5 @@
 # Arquivos grandes (>100MB) - rosbag, onnx, mcap, tar.gz
-
+*.mcap
 # Isaac ROS NVBlox
 zed_ws/isaac_ros_assets/isaac_ros_nvblox/quickstart/rosbag2_2024_04_04-15_44_33_0.db3
 
@@ -23,3 +23,10 @@ cleanup_push.sh
 
 # Cache files
 */__pycache__/
+.bash*
+.wget*
+/.cache/
+/.cmake/
+/.ros/
+*/cache/
+*.pyc

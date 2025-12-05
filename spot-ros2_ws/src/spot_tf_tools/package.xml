@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>spot_tf_tools</name>
+  <version>0.0.1</version>
+  <description>TF utilities for Spot (auto-compute base->camera from AprilTag)</description>
+  <maintainer email="luiz.felipe.r.dantas@gmail.com">Luiz F Dantas</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>tf-transformations</exec_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+

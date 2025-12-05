@@ -73,6 +73,7 @@ RUN apt-get update -q && \
     python3-pytest-cov \
     python3-protobuf \
     python3-vcstool \
+    ros-humble-cv-bridge \
     ros-humble-ament-cmake-auto \
     ros-humble-desktop \
     ros-dev-tools \
@@ -96,6 +97,7 @@ RUN apt-get update -q && \
     ros-humble-moveit-ros-move-group \
     ros-humble-moveit-plugins \
     ros-humble-moveit-ros-perception \
+    ros-humble-magic-enum \
     # RealSense packages
     udev usbutils \
     librealsense2-utils librealsense2-dev librealsense2-dbg \

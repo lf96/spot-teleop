@@ -1,0 +1,17 @@
+/**:
+  ros__parameters:
+    # Família do tag (36h11 é a mais comum)
+    family: "36h11"
+    size: 0.0948 # 1.2 no ISAAC mas aparentemente tem um desvio (ainda precisa investigar o que pode ser)
+
+    # Transport da imagem (raw normalmente é ok)
+    image_transport: "raw"
+    
+    publish_tf: true
+
+    # Descrição dos tags usados
+    tag:
+      ids: [0]
+      frames: ["apriltag_0"]
+      sizes: [0.0948] # 1.2 no ISAAC mas aparentemente tem um desvio (ainda precisa investigar o que pode ser)
+

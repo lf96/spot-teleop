@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    cspace_distance_weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    retract_config: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
