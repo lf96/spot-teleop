@@ -2,9 +2,23 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    OpaqueFunction,
+    TimerAction,
+    ExecuteProcess,
+    GroupAction,
+)
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node, SetParameter
+from launch_ros.substitutions import FindPackageShare
+from moveit_configs_utils import MoveItConfigsBuilder
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
-    # 1) AprilTag detector (ajuste os tópicos da ZED)
+    # 1) AprilTag detector
     config_dir = os.path.join(
         get_package_share_directory('spot_tf_tools'),
         'config',
@@ -18,7 +32,9 @@ def generate_launch_description():
             ('image_rect', '/zed/zed_node/rgb/image_rect_color'),
             ('camera_info','/zed/zed_node/rgb/camera_info'),
         ],
-        parameters=[config_dir]
+        parameters=[config_dir],
+        arguments=['--ros-args', '--log-level', 'ERROR']
+
     )
 
     # 2) T_base_tag (se o tag está rígido na base; ajuste XYZ/quat)
@@ -78,5 +94,43 @@ def generate_launch_description():
         output="screen",
     )
 
-    return LaunchDescription([apriltag, solver, tf_monitor, segmenter])
+    depth_mask = Node(
+        package='spot_tf_tools',
+        executable='depth_mask_filter',      
+        name='depth_mask_filter',
+        parameters=[{
+            'depth_topic':  '/zed/zed_node/depth/depth_registered',
+            'mask_topic':   '/cumotion/camera_1/robot_mask',
+            'output_topic': '/zed/zed_node/depth/masked_depth',
+            'invert_mask':  False,  # False: apaga onde mask != 0
+        }]
+    )
+
+    nvblox_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("nvblox_examples_bringup"),
+                "launch",
+                "nvblox_isaac_zed.launch.py",
+            ])
+        ),
+    )
+
+    nvblox_bridge = Node(
+        package='spot_tf_tools',
+        executable='nvblox_cloud_to_moveit',
+        name='nvblox_cloud_to_moveit',
+        parameters=[{
+            'input_cloud_topic': '/nvblox_node/pessimistic_static_esdf_pointcloud',
+            'output_cloud_topic': '/collision_cloud',
+            'fixed_frame': 'body',  # plane frame do MoveIt / cuMotion
+            'max_range': 5.0,
+            'z_min': -0.5,
+            'z_max': 2.0,
+            'decimation': 2,
+        }],
+        output='screen',
+    )
+
+    return LaunchDescription([apriltag, solver, tf_monitor, segmenter, depth_mask, nvblox_launch, nvblox_bridge])
 

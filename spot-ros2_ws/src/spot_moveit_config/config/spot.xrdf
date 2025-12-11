@@ -2,11 +2,7 @@ format: "xrdf"
 
 format_version: 1.0
 
-tool_frames:
-  - name: gripper_tip
-    link: arm_link_fngr
-    xyz: [0.0, 0.0, 0.0]
-    rpy: [0.0, 0.0, 0.0]
+tool_frames: [arm_link_fngr]
 
 default_joint_positions:
   arm_sh0: -0.0 

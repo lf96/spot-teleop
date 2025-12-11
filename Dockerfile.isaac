@@ -6,7 +6,7 @@ ENV ACCEPT_EULA=Y \
     PRIVACY_CONSENT=Y
 
 # Instalar pacotes básicos
-RUN apt update && apt install -y git wget build-essential python3 libusb-1.0-0 libusb-1.0-0-dev
+RUN apt update && apt install -y git wget build-essential python3 libusb-1.0-0 libusb-1.0-0-dev python3-pip
 
 # Criar diretório de workspace separado dos binários do Isaac Sim
 RUN mkdir -p /workspace

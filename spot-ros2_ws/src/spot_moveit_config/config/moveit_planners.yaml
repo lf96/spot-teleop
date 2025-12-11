@@ -1,3 +1,13 @@
+isaac-cumotion:  
+  planning_plugin: isaac_ros_cumotion_moveit/CumotionPlanner
+  request_adapters: >-
+    default_planner_request_adapters/FixWorkspaceBounds
+    default_planner_request_adapters/FixStartStateBounds
+    default_planner_request_adapters/FixStartStateCollision
+    default_planner_request_adapters/FixStartStatePathConstraints
+  start_state_max_bounds_error: 0.1
+  num_steps: 32
+  
 ompl:
   planning_plugin: ompl_interface/OMPLPlanner
   request_adapters: >-
@@ -9,16 +19,6 @@ ompl:
   start_state_max_bounds_error: 0.1
   planner_configs:
     - arm_rrtconnect
-
-isaac-cumotion:  
-  planning_plugin: isaac_ros_cumotion_moveit/CumotionPlanner
-  request_adapters: >-
-    default_planner_request_adapters/FixWorkspaceBounds
-    default_planner_request_adapters/FixStartStateBounds
-    default_planner_request_adapters/FixStartStateCollision
-    default_planner_request_adapters/FixStartStatePathConstraints
-  start_state_max_bounds_error: 0.1
-  num_steps: 32
 
 planner_configs:
   arm_rrtconnect:

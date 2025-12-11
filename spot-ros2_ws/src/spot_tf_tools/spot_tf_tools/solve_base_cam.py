@@ -74,6 +74,7 @@ class BaseCamSolver(Node):
         super().__init__('base_cam_solver')
         self.declare_parameter('base_frame', 'base')
         self.declare_parameter('cam_frame',  'zed_left_camera_optical_frame')
+        self.declare_parameter('cam_base_frame', 'zed_camera_link')
         self.declare_parameter('tag_frame',  'tag36h11:0')  # ou 'apriltag_0'
         self.declare_parameter('recompute',  False)  # se True, reavalia periodicamente
         self.declare_parameter('num_samples', 1)
@@ -83,6 +84,7 @@ class BaseCamSolver(Node):
 
         self.base = self.get_parameter('base_frame').get_parameter_value().string_value
         self.cam  = self.get_parameter('cam_frame').get_parameter_value().string_value
+        self.cam_base  = self.get_parameter('cam_base_frame').get_parameter_value().string_value        
         self.tag  = self.get_parameter('tag_frame').get_parameter_value().string_value
         self.recompute = self.get_parameter('recompute').get_parameter_value().bool_value
         self.num_samples = self.get_parameter('num_samples').value
@@ -152,9 +154,21 @@ class BaseCamSolver(Node):
             q_avg = average_quaternions(qs)
 
             # monta transform final
-            T_final = xyz_quat_to_mat(p_avg, q_avg)
+            T_base_cam_final = xyz_quat_to_mat(p_avg, q_avg)
 
-            tf_bc = mat_to_tf(T_final, self.base, self.cam)
+            now = rclpy.time.Time()
+            t_cam_base_cam = self.buf.lookup_transform(
+                self.cam_base,  # parent no lookup
+                self.cam,       # child no lookup
+                now,
+                timeout=Duration(seconds=0.5)
+            )
+            T_cam_base_cam = tf_to_mat(t_cam_base_cam)
+            T_cam_cam_base = np.linalg.inv(T_cam_base_cam)
+
+            T_final = T_base_cam_final @ T_cam_cam_base
+
+            tf_bc = mat_to_tf(T_final, self.base, self.cam_base)
 
 
             # publica em /tf_static (latch)

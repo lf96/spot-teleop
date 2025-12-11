@@ -30,3 +30,10 @@ cleanup_push.sh
 /.ros/
 */cache/
 *.pyc
+
+# Local Ignored Files 
+frames_*
+cuda-keyring*
+rosbag*
+.config/*
+.rviz2/*

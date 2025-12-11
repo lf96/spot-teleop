@@ -29,7 +29,7 @@ class JointStateMapper(Node):
         out = JointState()
         out.header.stamp = self.get_clock().now().to_msg()
         # use same canonical frame as mock (/joint_states had frame_id base_link)
-        out.header.frame_id = 'base_link'
+        out.header.frame_id = 'base'
         out.name = TARGET.copy()
 
         # helper to fetch value or default

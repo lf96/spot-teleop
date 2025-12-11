@@ -75,7 +75,6 @@ def launch_setup(context, *args, **kwargs):
             "cumotion_planner.include_trajopt_retract_seed": "false",
         }.items(),
     )
-
     # --- Fase 2: Preparar as ações do MoveIt, que serão atrasadas ---
     # Primeiro, preparamos as configurações do MoveIt como antes
     moveit_cfg = (
@@ -91,6 +90,7 @@ def launch_setup(context, *args, **kwargs):
             publish_transforms_updates=True,
         )
         .robot_description_kinematics(file_path="config/kinematics.yaml")
+        .sensors_3d(file_path="config/sensors_3d.yaml")
         .to_moveit_configs()
     )
 
@@ -329,7 +329,7 @@ def generate_launch_description():
         default_value="false",
         description="true = usar MoveIt Servo (traj) | false = usar state (plan&execute)",
     )
-    declare_use_mapper = DeclareLaunchArgument("use_mapper", default_value="false")
+    declare_use_mapper = DeclareLaunchArgument("use_mapper", default_value="true")
     
     return LaunchDescription([
         declare_sim_arg,

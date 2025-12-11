@@ -6,7 +6,7 @@ Este arquivo (`spot_servo_config.yaml`) contém a configuração do MoveIt Servo
 
 ### 1. Configurações Básicas
 - **move_group_name**: "arm" - Grupo de planejamento definido no SRDF
-- **planning_frame**: "base_link" - Frame de referência base do robô
+- **planning_frame**: "base" - Frame de referência base do robô
 - **robot_link_command_frame**: "arm_link_fngr" - Frame do end-effector (gripper)
 
 ### 2. Tipos de Comando
@@ -31,7 +31,7 @@ Este arquivo (`spot_servo_config.yaml`) contém a configuração do MoveIt Servo
 # Publicar comando de velocidade cartesiana
 ros2 topic pub /servo_commands/delta_twist_cmds geometry_msgs/TwistStamped "
 header:
-  frame_id: 'base_link'
+  frame_id: 'base'
 twist:
   linear:
     x: 0.1
@@ -48,7 +48,7 @@ twist:
 # Publicar comando de velocidade de junta
 ros2 topic pub /servo_commands/delta_joint_cmds control_msgs/JointJog "
 header:
-  frame_id: 'base_link'
+  frame_id: 'base'
 joint_names: ['arm_sh0', 'arm_sh1', 'arm_el0', 'arm_el1', 'arm_wr0', 'arm_wr1']
 displacements: [0.1, 0.0, 0.0, 0.0, 0.0, 0.0]
 velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
