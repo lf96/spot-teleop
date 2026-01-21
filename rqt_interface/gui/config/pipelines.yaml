@@ -1,0 +1,9 @@
+pipelines:
+  core:
+    script: rqt_interface/scripts/bringup/00_core.sh
+  sensors:
+    script: rqt_interface/scripts/bringup/10_sensors.sh
+  mapping:
+    script: rqt_interface/scripts/bringup/20_mapping.sh
+  planning:
+    script: rqt_interface/scripts/bringup/30_planning.sh
