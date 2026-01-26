@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     robot: '/home/spot-teleop/spot-ros2_ws/src/spot_moveit_config/config/spot.xrdf'
-    urdf_path: '/home/spot-teleop/spot-ros2_ws/src/spot_moveit_config/config/spot_arm.urdf'
+    urdf_path: '/home/spot-teleop/spot-ros2_ws/src/spot_moveit_config/config/spot.urdf'
     depth_image_topics: ['/zed/zed_node/depth/depth_registered']
     depth_camera_infos: ['/zed/zed_node/rgb/camera_info']
     robot_mask_publish_topics: ['/cumotion/camera_1/robot_mask']

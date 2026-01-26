@@ -57,7 +57,7 @@ def launch_setup(context, *args, **kwargs):
     ])
     urdf_path = PathJoinSubstitution([
         FindPackageShare("spot_moveit_config"),
-        "config", "spot_arm.urdf"
+        "config", "spot.urdf"
     ])
     cumotion_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -73,6 +73,8 @@ def launch_setup(context, *args, **kwargs):
             "cumotion_planner.joint_states_topic": "/joint_states_mapped",
             "cumotion_planner.tool_frame": "arm_link_fngr",
             "cumotion_planner.include_trajopt_retract_seed": "false",
+            "cumotion_planner.collision_cache_cuboid": "50",
+            "cumotion_planner.collision_cache_mesh": "50",
         }.items(),
     )
     # --- Fase 2: Preparar as ações do MoveIt, que serão atrasadas ---

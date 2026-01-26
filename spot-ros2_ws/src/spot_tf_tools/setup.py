@@ -25,6 +25,7 @@ setup(
             'segmenter_supervisor = spot_tf_tools.segmenter_supervisor:main',
             'depth_mask_filter = spot_tf_tools.depth_mask_filter:main',
             'nvblox_cloud_to_moveit = spot_tf_tools.nvblox_cloud_to_moveit:main',
+            'point_cloud_mask_filter = spot_tf_tools.point_cloud_mask_filter:main',
         ],
     },
 )

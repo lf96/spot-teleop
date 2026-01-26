@@ -1,2 +1,23 @@
-# 3 - nvblox mapping start
-docker-compose exec spot_container ros2 launch spot_bringup mapping.launch.py
+# 3 - Nvblox mapping start
+#!/usr/bin/env bash
+
+echo "=============================="
+echo "[MAPPING] Bringing up NVBLOX mapping"
+echo "=============================="
+
+docker-compose up -d zed
+
+echo "[MAPPING] Waiting for ZED container..."
+rqt_interface/scripts/utils/wait_for_container.sh zed
+
+echo "[MAPPING] ZED Container is running"
+
+docker-compose exec zed bash -c "
+    export ROS_DISTRO=humble && \
+    export RMW_IMPLEMENTATION=rmw_fastrtps_cpp && \
+
+    source /opt/ros/\$ROS_DISTRO/setup.bash && \
+    source /home/spot-teleop/zed_ws/install/setup.bash && \
+
+    ros2 launch nvblox_examples_bringup nvblox_isaac_zed.launch.py
+    "

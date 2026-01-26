@@ -14,7 +14,9 @@ MAP = {
 
 # Target ordering: legs then arm (matching URDF/MoveIt expectations)
 TARGET = [
-    'arm_sh0', 'arm_sh1', 'arm_el0', 'arm_el1', 'arm_wr0', 'arm_wr1', 'arm_f1x',
+    'arm_sh0', 'fl_hx', 'fr_hx', 'hl_hx', 'hr_hx', 'arm_sh1', 'fl_hy', 'fr_hy', 'hl_hy',
+    'hr_hy', 'arm_el0', 'fl_kn', 'fr_kn', 'hl_kn', 'hr_kn', 'arm_el1', 'arm_wr0', 'arm_wr1',
+    'arm_f1x'
 ]
 
 class JointStateMapper(Node):

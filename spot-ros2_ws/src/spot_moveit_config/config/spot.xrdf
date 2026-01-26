@@ -11,13 +11,25 @@ default_joint_positions:
   arm_el1: 0.0
   arm_wr0: -0.0
   arm_wr1: 0.0
+  fl_hx: -0.0004
+  fr_hx: 0.0003
+  hl_hx: 0.0004
+  hr_hx: -0.0
+  fl_hy: 1e-04
+  fr_hy: -0.0
+  hl_hy: -0.0041
+  hr_hy: -0.0491
+  fl_kn: -0.2476
+  fr_kn: -0.247
+  hl_kn: -0.2542
+  hr_kn: -0.2471
 
 cspace: 
   joint_names: [arm_sh0, arm_sh1, arm_el0, arm_el1, arm_wr0, arm_wr1]
-  acceleration_limits: [10, 10, 10, 10, 10, 10]
+  acceleration_limits: [2, 2, 2, 2, 2, 2]
   jerk_limits: [10000, 10000, 10000, 10000, 10000, 10000]
   retract_config: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-  velocity_limits: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0]
+  velocity_limits: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
   cspace_distance_weight: [1.0, 1.0, 1.0, 1.0, 1.2, 1.2]
 
 collision: 
@@ -32,6 +44,10 @@ self_collision:
       - "fr_hip"
       - "hl_hip"
       - "hr_hip"
+      - "fl_uleg"
+      - "fr_uleg"
+      - "hl_uleg"
+      - "hr_uleg"
     arm_link_sh0: 
       - "arm_link_sh1"
       - "fl_hip"
@@ -179,3 +195,138 @@ geometry:
           radius: 0.014
         - center: [0.112, -0.01, -0.038]
           radius: 0.0147
+      base: 
+        - center: [0.342, -0.051, -0.008]
+          radius: 0.1127
+        - center: [-0.324, 0.052, 0.011]
+          radius: 0.11
+        - center: [-0.337, -0.076, 0.005]
+          radius: 0.1064
+        - center: [0.206, -0.002, 0.044]
+          radius: 0.1073
+        - center: [0.354, 0.008, -0.01]
+          radius: 0.0992
+        - center: [0.177, -0.052, -0.002]
+          radius: 0.1114
+        - center: [0.034, -0.05, 0.007]
+          radius: 0.1102
+        - center: [-0.104, -0.054, 0.007]
+          radius: 0.1089
+        - center: [-0.2, -0.052, 0.009]
+          radius: 0.1076
+        - center: [-0.197, 0.058, 0.018]
+          radius: 0.1078
+        - center: [-0.085, 0.054, 0.01]
+          radius: 0.1056
+        - center: [0.049, 0.051, 0.001]
+          radius: 0.1034
+        - center: [0.182, 0.066, -0.003]
+          radius: 0.1013
+      fl_hip: 
+        - center: [0.0, 0.007, -0.001]
+          radius: 0.0748
+      fl_uleg: 
+        - center: [0.002, -0.0, -0.007]
+          radius: 0.0684
+        - center: [0.001, 0.005, -0.092]
+          radius: 0.0641
+        - center: [-0.001, 0.002, -0.228]
+          radius: 0.0607
+        - center: [0.011, 0.0, -0.309]
+          radius: 0.0573
+        - center: [-0.001, -0.002, -0.168]
+          radius: 0.0633
+      fl_lleg: 
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.05
+        - center: [0.005, -0.002, -0.337]
+          radius: 0.05
+        - center: [0.001, -0.0, -0.067]
+          radius: 0.05
+        - center: [0.002, -0.001, -0.135]
+          radius: 0.05
+        - center: [0.003, -0.001, -0.202]
+          radius: 0.05
+        - center: [0.004, -0.002, -0.27]
+          radius: 0.05
+      fr_hip: 
+        - center: [0.0, 0.007, -0.001]
+          radius: 0.0748
+      fr_uleg: 
+        - center: [0.002, -0.0, -0.007]
+          radius: 0.0684
+        - center: [0.001, 0.005, -0.092]
+          radius: 0.0641
+        - center: [-0.001, 0.002, -0.228]
+          radius: 0.0607
+        - center: [0.011, 0.0, -0.309]
+          radius: 0.0573
+        - center: [-0.001, -0.002, -0.168]
+          radius: 0.0633
+      fr_lleg:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.05
+        - center: [0.005, -0.002, -0.337]
+          radius: 0.05
+        - center: [0.001, -0.0, -0.067]
+          radius: 0.05
+        - center: [0.002, -0.001, -0.135]
+          radius: 0.05
+        - center: [0.003, -0.001, -0.202]
+          radius: 0.05
+        - center: [0.004, -0.002, -0.27]
+          radius: 0.05
+      hl_hip: 
+        - center: [0.0, 0.007, -0.001]
+          radius: 0.0748
+      hl_uleg: 
+        - center: [0.002, -0.0, -0.007]
+          radius: 0.0684
+        - center: [0.001, 0.005, -0.092]
+          radius: 0.0641
+        - center: [-0.001, 0.002, -0.228]
+          radius: 0.0607
+        - center: [0.011, 0.0, -0.309]
+          radius: 0.0573
+        - center: [-0.001, -0.002, -0.168]
+          radius: 0.0633
+      hl_lleg:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.05
+        - center: [0.005, -0.002, -0.337]
+          radius: 0.05
+        - center: [0.001, -0.0, -0.067]
+          radius: 0.05
+        - center: [0.002, -0.001, -0.135]
+          radius: 0.05
+        - center: [0.003, -0.001, -0.202]
+          radius: 0.05
+        - center: [0.004, -0.002, -0.27]
+          radius: 0.05
+      hr_hip: 
+        - center: [0.0, 0.007, -0.001]
+          radius: 0.0748
+      hr_uleg: 
+        - center: [0.002, -0.0, -0.007]
+          radius: 0.0684
+        - center: [0.001, 0.005, -0.092]
+          radius: 0.0641
+        - center: [-0.001, 0.002, -0.228]
+          radius: 0.0607
+        - center: [0.011, 0.0, -0.309]
+          radius: 0.0573
+        - center: [-0.001, -0.002, -0.168]
+          radius: 0.0633
+      hr_lleg:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.05
+        - center: [0.005, -0.002, -0.337]
+          radius: 0.05
+        - center: [0.001, -0.0, -0.067]
+          radius: 0.05
+        - center: [0.002, -0.001, -0.135]
+          radius: 0.05
+        - center: [0.003, -0.001, -0.202]
+          radius: 0.05
+        - center: [0.004, -0.002, -0.27]
+          radius: 0.05

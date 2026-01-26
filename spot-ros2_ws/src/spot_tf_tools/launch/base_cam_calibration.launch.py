@@ -71,6 +71,7 @@ def generate_launch_description():
             "ang_threshold_deg": 3.0,
             "check_period_s": 5.0,
         }],
+        arguments=['--ros-args', '--log-level', 'WARN']
     )
     # 5) Segmentador já usando o TF correto
     segmenter_config = os.path.join(
@@ -92,18 +93,22 @@ def generate_launch_description():
                 )
         }],
         output="screen",
+        arguments=['--ros-args', '--log-level', 'WARN']
     )
 
-    depth_mask = Node(
+    point_cloud_mask = Node(
         package='spot_tf_tools',
-        executable='depth_mask_filter',      
-        name='depth_mask_filter',
+        executable='point_cloud_mask_filter',      
+        name='point_cloud_mask_filter',
         parameters=[{
-            'depth_topic':  '/zed/zed_node/depth/depth_registered',
+            'cloud_topic':  '/zed/zed_node/point_cloud/cloud_registered',
             'mask_topic':   '/cumotion/camera_1/robot_mask',
-            'output_topic': '/zed/zed_node/depth/masked_depth',
+            'camera_info_topic': '/zed/zed_node/depth/camera_info',
+            'output_cloud_topic': '/zed/zed_node/point_cloud/masked_cloud',
+            'camera_frame': 'zed_left_camera_optical_frame',
             'invert_mask':  False,  # False: apaga onde mask != 0
-        }]
+        }],
+        arguments=['--ros-args', '--log-level', 'info']
     )
 
     nvblox_launch = IncludeLaunchDescription(
@@ -121,16 +126,19 @@ def generate_launch_description():
         executable='nvblox_cloud_to_moveit',
         name='nvblox_cloud_to_moveit',
         parameters=[{
-            'input_cloud_topic': '/nvblox_node/pessimistic_static_esdf_pointcloud',
+            'input_cloud_topic': '/zed/zed_node/point_cloud/masked_cloud',
             'output_cloud_topic': '/collision_cloud',
             'fixed_frame': 'body',  # plane frame do MoveIt / cuMotion
-            'max_range': 5.0,
+            'max_range': 1.5,
             'z_min': -0.5,
             'z_max': 2.0,
-            'decimation': 2,
+            'decimation': 1,
+            'max_voxels': 30,
+            'voxel_size': 0.05,
         }],
         output='screen',
+        arguments=['--ros-args', '--log-level', 'INFO'],
     )
 
-    return LaunchDescription([apriltag, solver, tf_monitor, segmenter, depth_mask, nvblox_launch, nvblox_bridge])
+    return LaunchDescription([apriltag, solver, tf_monitor, segmenter, point_cloud_mask, nvblox_launch, nvblox_bridge])
 
