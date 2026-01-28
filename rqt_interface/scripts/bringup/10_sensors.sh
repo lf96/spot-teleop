@@ -8,7 +8,7 @@ echo "=============================="
 docker-compose up -d zed
 
 echo "[SENSORS] Waiting for ZED container..."
-rqt_interface/scripts/utils/wait_for_container.sh zed
+scripts/utils/wait_for_container.sh zed
 
 echo "[SENSORS] ZED Container is running"
 

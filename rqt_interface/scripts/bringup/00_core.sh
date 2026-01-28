@@ -10,11 +10,15 @@ echo "=============================="
 docker-compose up -d isaac-sim
 
 echo "[CORE] Waiting for Isaac container..."
-rqt_interface/scripts/utils/wait_for_container.sh isaac-sim
+scripts/utils/wait_for_container.sh isaac-sim
 
 echo "[CORE] Isaac Container is running"
 
-docker-compose exec isaac-sim bash -c "
+READY_FILE="/tmp/isaac_core_ready"
+
+docker-compose exec isaac-sim rm -f "$READY_FILE" || true
+
+docker-compose exec -d isaac-sim bash -c "
     export ROS_DISTRO=humble && \
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp && \
     export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/isaac-sim/exts/isaacsim.ros2.bridge/humble/lib && \
@@ -28,7 +32,21 @@ docker-compose exec isaac-sim bash -c "
         --ext-folder /workspace/zed-isaac-sim/exts \
         --enable_cameras \
         --enable usd.autoplay \
+        --exts/”omni.kit.widget.cache_indicator”/check_updates = false \
 
-"
+"  &
+
+ISAAC_PID=$!
+
+echo "[CORE] Isaac Sim PID: $ISAAC_PID"
+
+echo "[CORE] Waiting for Isaac Sim readiness signal..."
+
+while ! docker-compose exec isaac-sim test -f "$READY_FILE"; do
+    sleep 1
+done
+
 
 echo "[CORE] Isaac Sim bringup complete"
+
+docker-compose wait isaac-sim

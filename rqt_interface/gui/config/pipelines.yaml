@@ -1,9 +1,37 @@
 pipelines:
-  core:
-    script: rqt_interface/scripts/bringup/00_core.sh
-  sensors:
-    script: rqt_interface/scripts/bringup/10_sensors.sh
-  mapping:
-    script: rqt_interface/scripts/bringup/20_mapping.sh
-  planning:
-    script: rqt_interface/scripts/bringup/30_planning.sh
+  full_stack:
+    - name: core
+      script: scripts/bringup/00_core.sh
+
+    - name: sensors
+      script: scripts/bringup/10_sensors.sh
+      wait_for:
+        ros_topic: /zed/left/image_rect_color
+        process: core
+
+    - name: mapping
+      script: scripts/bringup/20_mapping.sh
+      wait_for:
+        ros_node: /nvblox_node
+        process: core
+
+    - name: planning
+      script: scripts/bringup/30_planning.sh
+      wait_for:
+        ros_node: /move_group
+        process: core
+  base_only:
+    - name: core
+      script: scripts/bringup/00_core.sh
+
+    - name: sensors
+      script: scripts/bringup/10_sensors.sh
+      wait_for:
+        ros_topic: /zed/left/image_rect_color
+        process: core
+
+    - name: planning
+      script: scripts/bringup/30_planning.sh
+      wait_for:
+        ros_node: /move_group
+        process: core

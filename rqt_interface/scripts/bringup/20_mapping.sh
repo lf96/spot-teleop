@@ -8,7 +8,7 @@ echo "=============================="
 docker-compose up -d zed
 
 echo "[MAPPING] Waiting for ZED container..."
-rqt_interface/scripts/utils/wait_for_container.sh zed
+scripts/utils/wait_for_container.sh zed
 
 echo "[MAPPING] ZED Container is running"
 

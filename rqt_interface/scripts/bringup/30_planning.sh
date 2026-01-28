@@ -8,7 +8,7 @@ echo "=============================="
 docker-compose up -d spot-ros2
 
 echo "[PLANNING] Waiting for SPOT-ROS2 container..."
-rqt_interface/scripts/utils/wait_for_container.sh spot-ros2
+scripts/utils/wait_for_container.sh spot-ros2
 
 echo "[PLANNING] SPOT-ROS2 Container is running"
 
