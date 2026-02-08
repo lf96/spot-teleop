@@ -8,11 +8,11 @@ echo "=============================="
 docker-compose up -d zed
 
 echo "[MAPPING] Waiting for ZED container..."
-scripts/utils/wait_for_container.sh zed
+/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh zed
 
 echo "[MAPPING] ZED Container is running"
 
-docker-compose exec zed bash -c "
+docker-compose exec -d zed bash -c "
     export ROS_DISTRO=humble && \
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp && \
 

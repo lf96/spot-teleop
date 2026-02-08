@@ -2,17 +2,17 @@
 #!/usr/bin/env bash
 
 echo "=============================="
-echo "[PLANNING] Bringing up NVBLOX mapping"
+echo "[PLANNING] Bringing up MoveIt Planning..."
 echo "=============================="
 
 docker-compose up -d spot-ros2
 
 echo "[PLANNING] Waiting for SPOT-ROS2 container..."
-scripts/utils/wait_for_container.sh spot-ros2
+/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh spot-ros2
 
 echo "[PLANNING] SPOT-ROS2 Container is running"
 
-docker-compose exec spot-ros2 bash -c "
+docker-compose exec -d spot-ros2 bash -c "
     export ROS_DISTRO=humble && \
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp && \
 

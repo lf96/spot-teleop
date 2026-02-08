@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rqt_interface</name>
+  <version>0.0.1</version>
+  <description>Qt RViz embedded interface</description>
+
+  <maintainer email="you@email.com">You</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>rviz</depend>
+  <depend>qt5</depend>
+  <depend>yaml-cpp</depend>
+
+
+  <export/>
+</package>

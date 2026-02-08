@@ -1,8 +1,10 @@
 import yaml
 from controllers.process_controller import ProcessController
 from controllers.ros_monitor import RosMonitor
+import subprocess
 import time
-
+import sys
+import os
 
 class PipelineController:
     def __init__(self, ui):
@@ -60,9 +62,7 @@ class PipelineController:
         """
         Isaac Sim readiness handshake
         """
-        import subprocess
-        import time
-
+        time.sleep(10)
         READY_FILE = "/tmp/isaac_core_ready"
 
         while True:
@@ -80,4 +80,12 @@ class PipelineController:
         for name, proc in self.processes.items():
             print(f"[PIPELINE] Stopping process: {name}")
             proc.stop()
+        self.process = subprocess.Popen(
+            ["bash", "-lc", "scripts/shutdown/00_all.sh"],
+            stdin=sys.stdin,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True,
+            preexec_fn= os.setsid
+        )
         self.processes = {}

@@ -10,13 +10,15 @@ echo "=============================="
 docker-compose up -d isaac-sim
 
 echo "[CORE] Waiting for Isaac container..."
-scripts/utils/wait_for_container.sh isaac-sim
+/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh isaac-sim
 
 echo "[CORE] Isaac Container is running"
 
 READY_FILE="/tmp/isaac_core_ready"
+COMPLETE_FILE="/tmp/isaac_core_complete"
 
 docker-compose exec isaac-sim rm -f "$READY_FILE" || true
+docker-compose exec isaac-sim rm -f "$COMPLETE_FILE" || true
 
 docker-compose exec -d isaac-sim bash -c "
     export ROS_DISTRO=humble && \
@@ -29,7 +31,7 @@ docker-compose exec -d isaac-sim bash -c "
         --headless \
         --no-window \
         --allow-root \
-        --ext-folder /workspace/zed-isaac-sim/exts \
+        --ext-folder /workspace/scripts/exts \
         --enable_cameras \
         --enable usd.autoplay \
         --exts/”omni.kit.widget.cache_indicator”/check_updates = false \
@@ -46,7 +48,8 @@ while ! docker-compose exec isaac-sim test -f "$READY_FILE"; do
     sleep 1
 done
 
-
 echo "[CORE] Isaac Sim bringup complete"
+
+touch "$COMPLETE_FILE"
 
 docker-compose wait isaac-sim
