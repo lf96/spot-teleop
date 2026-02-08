@@ -1,0 +1,206 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
+SHELL ["/bin/bash", "-c"]
+
+# --------------------------------------------------
+# 1. Base system & dependencies
+# --------------------------------------------------
+RUN apt-get update && apt-get install -y \
+    locales \
+    curl \
+    gnupg2 \
+    lsb-release \
+    ca-certificates \
+    build-essential \
+    cmake \
+    git \
+    python3 \
+    python3-pip \
+    python3-yaml \
+    python3-setuptools \
+    python3-dev \
+    software-properties-common \
+    libeigen3-dev \
+    && add-apt-repository universe \
+    && locale-gen en_US.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+# --------------------------------------------------
+# 2. ROS 1 Noetic (binary)
+# --------------------------------------------------
+RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" \
+      > /etc/apt/sources.list.d/ros1.list \
+ && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - \
+ && apt-get update \
+ && apt-get install -y \
+      ros-noetic-ros-base \
+      ros-noetic-roscpp \
+      ros-noetic-std-msgs \
+ && rm -rf /var/lib/apt/lists/*
+
+# --------------------------------------------------
+# 3. Configure Ros 2 repositories
+# --------------------------------------------------
+
+RUN apt update && apt install curl -y \
+  && export ROS_APT_SOURCE_VERSION=$(curl -s \
+   https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | \
+   grep -F "tag_name" | awk -F\" '{print $4}') \
+  && curl -L -o /tmp/ros2-apt-source.deb \
+   "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb" \
+  && dpkg -i /tmp/ros2-apt-source.deb
+
+
+# --------------------------------------------------
+# 4. Install Common packages
+# --------------------------------------------------
+
+RUN apt update && apt install -y \
+  python3-flake8-docstrings \
+  python3-pytest-cov \
+  ros-dev-tools
+
+# --------------------------------------------------
+# 5. Python tools via pip
+# --------------------------------------------------
+RUN python3 -m pip install --upgrade pip \
+ && python3 -m pip install -U \
+      rosdep \
+      colcon-common-extensions \
+      vcstool \
+      flake8-blind-except \
+      flake8-builtins \
+      flake8-class-newline \
+      flake8-comprehensions \
+      flake8-deprecated \
+      flake8-import-order \
+      flake8-quotes \
+      "pytest>=5.3" \
+      pytest-repeat \
+      pytest-rerunfailures
+
+# --------------------------------------------------
+# 6. ROS 2 Humble (source build)
+# --------------------------------------------------
+RUN echo "deb http://packages.ros.org/ros2/ubuntu focal main" \
+      > /etc/apt/sources.list.d/ros2.list \
+ && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - \
+ && apt-get update \
+ && apt-get install -y \
+      python3-argcomplete \
+      python3-lark \
+      python3-numpy \
+      python3-setuptools \
+      libbullet-dev \
+      libasio-dev \
+      libtinyxml2-dev \
+      libssl-dev \
+      libyaml-cpp-dev \
+      libacl1-dev \
+      libx11-dev \
+      libxaw7-dev \
+      libxrandr-dev \
+      libxinerama-dev \
+      libxcursor-dev \
+      libxi-dev \
+      libxt-dev \
+      xorg-dev \ 
+      libgl1-mesa-dev \
+      libglu1-mesa-dev \
+      freeglut3-dev \
+      mesa-common-dev \
+      && rm -rf /var/lib/apt/lists/*
+
+# --------------------------------------------------
+# 7. Workspace
+# --------------------------------------------------
+WORKDIR /opt/ros2_ws
+RUN mkdir -p src
+
+# --------------------------------------------------
+# 8. Import ROS 2 Humble sources
+# --------------------------------------------------
+RUN rm -rf /tmp/ros2-humble.repos
+COPY docker/ros2-minimal.repos /tmp/ros2-minimal.repos
+RUN vcs import src < /tmp/ros2-minimal.repos
+
+# # --------------------------------------------------
+# # Bootstrap ament (OBRIGATÓRIO)
+# # --------------------------------------------------
+# WORKDIR /opt/ros2_ws
+# RUN colcon build \
+#     --symlink-install \
+#     --packages-up-to \
+#         ament_cmake \
+#     --cmake-args \
+#         -DCMAKE_BUILD_TYPE=Release
+
+# RUN source /opt/ros2_ws/install/setup.bash && \
+#     colcon build \
+#     --symlink-install \
+#     --packages-up-to \
+#       ament_cmake_ros
+# # --------------------------------------------------
+# # 12. Build Fast RTPS
+# # --------------------------------------------------
+# RUN source /opt/ros2_ws/install/setup.bash && \
+#     colcon build \
+#         --symlink-install \
+#         --packages-up-to \
+#             rmw \
+#         --cmake-args \
+#             -DBUILD_TESTING=OFF
+
+# RUN source /opt/ros2_ws/install/setup.bash && \
+#     colcon build \
+#         --symlink-install \
+#         --packages-up-to \
+#             rmw_implementation \
+#             rmw_fastrtps_shared_cpp \
+#             rmw_fastrtps_cpp \
+#             --cmake-args \
+#             -DCMAKE_BUILD_TYPE=Release \
+#             -DTRACETOOLS_DISABLED=ON \
+#             -DBUILD_TESTING=OFF    
+# --------------------------------------------------
+# 12. Build ROS 2 Humble
+# --------------------------------------------------
+WORKDIR /opt/ros2_ws
+RUN colcon build \
+      --symlink-install \
+      --merge-install \
+      --cmake-args \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -DENABLE_TRACING=OFF \
+      -DTRACETOOLS_DISABLED=ON
+
+# --------------------------------------------------
+# 13. Build ros1_bridge
+# --------------------------------------------------
+WORKDIR /opt/ros2_ws/src
+RUN git clone https://github.com/ros2/ros1_bridge.git
+
+WORKDIR /opt/ros2_ws
+RUN source /opt/ros/noetic/setup.bash \
+ && source /opt/ros2_ws/install/setup.bash \
+ && echo "AMENT_PREFIX_PATH=$AMENT_PREFIX_PATH" \
+ && echo "CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH" \
+ && colcon build \
+        --packages-select ros1_bridge \
+        --symlink-install \
+        --cmake-force-configure \
+        --merge-install \
+        --cmake-args \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_TESTING=OFF
+
+# --------------------------------------------------
+# 14. Runtime entrypoint
+# --------------------------------------------------
+
+ENTRYPOINT ["/ros_entrypoint.sh"]

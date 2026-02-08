@@ -1,0 +1,14 @@
+[package]
+title = "USD Autoplay"
+description = "Auto load USD and start simulation in headless mode"
+version = "0.1.0"
+category = "Simulation"
+
+[dependencies]
+"omni.usd" = {}
+"omni.timeline" = {}
+"isaacsim.ros2.bridge" = {}
+"omni.graph.core" = {}
+
+[[python.module]]
+name = "usd.autoplay"

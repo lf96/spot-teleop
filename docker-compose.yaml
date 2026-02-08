@@ -36,6 +36,7 @@ services:
     tty: true
     network_mode: host
     ipc: host
+    pid: host
     security_opt:
       - seccomp=unconfined
     privileged: true
@@ -70,6 +71,7 @@ services:
     working_dir: /home/spot-teleop/zed_ws
     network_mode: host
     ipc: host
+    pid: host
     privileged: true
     tty: true
     stdin_open: true
@@ -111,6 +113,7 @@ services:
     runtime: nvidia
     network_mode: host
     ipc: host
+    pid: host
     privileged: true
     environment:
       - ACCEPT_EULA=Y
@@ -148,3 +151,67 @@ services:
               count: all
               capabilities: [gpu, compute, graphics, utility]
 
+  rqt-interface:
+    build:
+      context: .
+      dockerfile: Dockerfile.rqt-interface
+    volumes:
+      - .:/home/spot-teleop
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /home/nexus/ipc:/home/ipc:rw
+    runtime: nvidia
+    working_dir: /home/spot-teleop/catkin_ws
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - ROS_DOMAIN_ID=42
+      - HOME=/home/spot-teleop
+      - USER=root
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    stdin_open: true
+    tty: true
+    network_mode: host
+    ipc: host
+    pid: host
+    security_opt:
+      - seccomp=unconfined
+    privileged: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  ros-bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile.bridge
+    volumes:
+      - .:/home/spot-teleop
+      - ./docker/ros1_bridge_entrypoint.sh:/ros_entrypoint.sh
+    command: ["/ros_entrypoint.sh"]
+    working_dir: /home/spot-teleop/ros-bridge_ws
+    environment:
+      - ROS_DOMAIN_ID=42
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+    runtime: nvidia
+    stdin_open: true
+    tty: true
+    network_mode: host
+    ipc: host
+    pid: host
+    security_opt:
+      - seccomp=unconfined
+    privileged: true
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
