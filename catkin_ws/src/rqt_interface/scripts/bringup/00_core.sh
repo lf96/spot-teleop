@@ -18,7 +18,7 @@ READY_FILE="/tmp/isaac_core_ready"
 COMPLETE_FILE="/tmp/isaac_core_complete"
 
 docker-compose exec isaac-sim rm -f "$READY_FILE" || true
-docker-compose exec isaac-sim rm -f "$COMPLETE_FILE" || true
+rm -f "$COMPLETE_FILE" || true
 
 docker-compose exec -d isaac-sim bash -c "
     export ROS_DISTRO=humble && \
@@ -49,6 +49,8 @@ while ! docker-compose exec isaac-sim test -f "$READY_FILE"; do
 done
 
 echo "[CORE] Isaac Sim bringup complete"
+
+echo "[CORE] Finished CORE bringup"
 
 touch "$COMPLETE_FILE"
 

@@ -1,0 +1,37 @@
+<launch>
+
+  <!-- ============================= -->
+  <!-- Arguments -->
+  <!-- ============================= -->
+  <arg name="spot_name" default="spot"/>
+  <arg name="publish_tf" default="true"/>
+
+  <!-- ============================= -->
+  <!-- Robot Description (URDF) -->
+  <!-- ============================= -->
+  <param
+    name="robot_description"
+    command="$(find xacro)/xacro
+             $(find spot_description)/urdf/spot.urdf.xacro"/>
+
+  <!-- ============================= -->
+  <!-- Semantic Description (SRDF) -->
+  <!-- ============================= -->
+  <param
+    name="robot_description_semantic"
+    textfile="/home/spot-teleop/spot-ros2_ws/src/spot_moveit_config/config/spot.srdf"/>
+
+  <!-- ============================= -->
+  <!-- Robot State Publisher -->
+  <!-- ============================= -->
+  <!-- <node
+    pkg="robot_state_publisher"
+    type="robot_state_publisher"
+    name="robot_state_publisher"
+    output="screen">
+    <param name="publish_frequency" value="50.0"/>
+
+    <remap from="/joint_states" to="/joint_states_mapped"/>
+  </node> -->
+
+</launch>

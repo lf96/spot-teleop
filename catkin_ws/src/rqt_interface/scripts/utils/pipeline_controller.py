@@ -71,7 +71,7 @@ class PipelineController:
                 stderr=subprocess.DEVNULL,
             )
             if result.returncode == 0:
-                print("[PIPELINE] Isaac core READY")
+                print("[PIPELINE] Isaac SIM READY")
                 return
             time.sleep(1)
 

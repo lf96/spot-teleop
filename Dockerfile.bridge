@@ -40,6 +40,13 @@ RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" \
       ros-noetic-ros-base \
       ros-noetic-roscpp \
       ros-noetic-std-msgs \
+      ros-noetic-geometry-msgs \
+      ros-noetic-sensor-msgs \
+      ros-noetic-nav-msgs \
+      ros-noetic-rosgraph-msgs \
+      ros-noetic-ros-tutorials \
+      ros-noetic-tf2-ros \
+      ros-noetic-tf2-msgs \
  && rm -rf /var/lib/apt/lists/*
 
 # --------------------------------------------------
@@ -128,44 +135,6 @@ RUN rm -rf /tmp/ros2-humble.repos
 COPY docker/ros2-minimal.repos /tmp/ros2-minimal.repos
 RUN vcs import src < /tmp/ros2-minimal.repos
 
-# # --------------------------------------------------
-# # Bootstrap ament (OBRIGATÓRIO)
-# # --------------------------------------------------
-# WORKDIR /opt/ros2_ws
-# RUN colcon build \
-#     --symlink-install \
-#     --packages-up-to \
-#         ament_cmake \
-#     --cmake-args \
-#         -DCMAKE_BUILD_TYPE=Release
-
-# RUN source /opt/ros2_ws/install/setup.bash && \
-#     colcon build \
-#     --symlink-install \
-#     --packages-up-to \
-#       ament_cmake_ros
-# # --------------------------------------------------
-# # 12. Build Fast RTPS
-# # --------------------------------------------------
-# RUN source /opt/ros2_ws/install/setup.bash && \
-#     colcon build \
-#         --symlink-install \
-#         --packages-up-to \
-#             rmw \
-#         --cmake-args \
-#             -DBUILD_TESTING=OFF
-
-# RUN source /opt/ros2_ws/install/setup.bash && \
-#     colcon build \
-#         --symlink-install \
-#         --packages-up-to \
-#             rmw_implementation \
-#             rmw_fastrtps_shared_cpp \
-#             rmw_fastrtps_cpp \
-#             --cmake-args \
-#             -DCMAKE_BUILD_TYPE=Release \
-#             -DTRACETOOLS_DISABLED=ON \
-#             -DBUILD_TESTING=OFF    
 # --------------------------------------------------
 # 12. Build ROS 2 Humble
 # --------------------------------------------------

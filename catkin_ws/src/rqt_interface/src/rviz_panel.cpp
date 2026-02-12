@@ -48,7 +48,7 @@ ROS_INFO("[RVIZ_PANEL] Setting up RViz visualization Frame...");
   
   QString config_path = QString::fromStdString(
     ros::package::getPath("rqt_interface") +
-    "/rviz/minimal_embed.rviz");
+    "/rviz/rqt_gui.rviz");
 
   if(QFile::exists(config_path)) {
     try

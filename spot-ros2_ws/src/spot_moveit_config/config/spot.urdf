@@ -259,7 +259,7 @@ Development Kit License (20191101-BDSDK-SL).
     </inertial>
   </link>
 
-  <!--Skeleton: HX Joints -->
+  <!--Skeleton HX Joints -->
   <joint name="fl_hx" type="revolute">
     <parent link="base"/>
     <child link="fl_hip"/>
@@ -296,7 +296,7 @@ Development Kit License (20191101-BDSDK-SL).
     <dynamics damping="0" friction="0"/>
   </joint>
 
-  <!--Skeleton: HY Joints -->
+  <!--Skeleton HY Joints -->
   <joint name="fl_hy" type="revolute">
     <parent link="fl_hip"/>
     <child link="fl_uleg"/>
@@ -333,7 +333,7 @@ Development Kit License (20191101-BDSDK-SL).
     <dynamics damping="0" friction="0"/>
   </joint>
 
-  <!--Skeleton: KN Joints -->
+  <!--Skeleton KN Joints -->
   <joint name="fl_kn" type="revolute">
     <parent link="fl_uleg"/>
     <child link="fl_lleg"/>
