@@ -25,8 +25,11 @@ private:
   rviz::VisualizationFrame* rviz_frame_;
   QPushButton* start_btn;
   QPushButton* stop_btn;
+  QPushButton* open_gripper_btn;
+  QPushButton* close_gripper_btn;
   QTextEdit* log;
   QVBoxLayout* controls_layout;
   QHBoxLayout* main_layout;
+  QHBoxLayout* gripper_layout;
 
 };

@@ -71,8 +71,7 @@ def launch_setup(context, *args, **kwargs):
             "cumotion_planner.robot":xrdf_path,
             "cumotion_planner.urdf_path": urdf_path,
             "cumotion_planner.joint_states_topic": "/joint_states_mapped",
-            "cumotion_planner.tool_frame": "arm_link_fngr",
-            "cumotion_planner.include_trajopt_retract_seed": "false",
+            "cumotion_planner.tool_frame": "arm_link_wr1",
             "cumotion_planner.collision_cache_cuboid": "50",
             "cumotion_planner.collision_cache_mesh": "50",
         }.items(),
@@ -135,6 +134,14 @@ def launch_setup(context, *args, **kwargs):
             'start_state_max_dt': 0.3,
         }
     }
+
+    # Proxy node (DEBUG)
+    proxy_node = Node(
+        package="spot_moveit_config",
+        executable="move_action_proxy",
+        output="screen",
+    )
+
     
     # Adiciona de volta o move_group_node pro planning e interactive markers
     move_group_node = Node(
@@ -147,7 +154,8 @@ def launch_setup(context, *args, **kwargs):
                 cumotion_params,
                 {'wait_for_complete_state_timeout': 5.0, 'use_sim_time': True},
         ],
-        remappings=remappings,
+        remappings=[('/move_action', '/move_action_internal'),
+                    ('/joint_states', '/joint_states_mapped')],
     )
 
     # Isaac publisher node: publica /joint_states_isaac (installed entrypoint)
@@ -225,6 +233,8 @@ def launch_setup(context, *args, **kwargs):
         remappings=remappings,
     )
 
+    # RViz node, também com parâmetros do MoveIt e remapeamentos
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -235,7 +245,27 @@ def launch_setup(context, *args, **kwargs):
         ],
         remappings=remappings,
     )
-    
+
+    # SUB Node para goal pose vinda da GUI
+    ee_goal_executor_node = Node(
+        package="spot_moveit_config",
+        executable="ee_goal_executor_node",
+        output="screen",
+        parameters=[
+            moveit_cfg.to_dict(),
+            {'planning_group': 'arm'},
+            {'end_effector_link': 'arm_link_wr1'},
+            {'planning_frame': 'body'}
+        ],
+    )
+
+    # Gripper Controller node
+    gripper_controller_node = Node(
+        package="spot_operation_ros2",
+        executable="gripper_controller",
+        output="screen",
+    )
+
     # Timer para o refresh do RViz (continua importante)
     rviz_refresh_timer = TimerAction(
         period=7.0, # Aumentei um pouco pra dar tempo de tudo subir antes do refresh
@@ -254,10 +284,14 @@ def launch_setup(context, *args, **kwargs):
         robot_state_publisher_node,
         rviz_node,
         rviz_refresh_timer,
+        ee_goal_executor_node,
+        proxy_node,
+        gripper_controller_node
     ]
     if not servo:
         # inserir move_group entre RSP e RViz para manter ordem lógica
         sim_timer_actions.insert(1, move_group_node)
+
     else:
         # adicionar servo_node ao sim_group quando servo=true
         sim_timer_actions.insert(1, servo_node)

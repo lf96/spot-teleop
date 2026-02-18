@@ -28,6 +28,18 @@ void PipelineController::stop()
   requestHostExecution("stop");
 }
 
+void PipelineController::openGripper()
+{
+  std::cout << "[PIPELINE] Opening gripper" << std::endl;
+  requestHostExecution("open_gripper");
+}
+
+void PipelineController::closeGripper()
+{
+  std::cout << "[PIPELINE] Closing gripper" << std::endl;
+  requestHostExecution("close_gripper");
+}
+
 void PipelineController::requestHostExecution(const std::string& command)
 {
   int fd = socket(AF_UNIX, SOCK_STREAM, 0);

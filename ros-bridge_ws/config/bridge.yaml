@@ -7,7 +7,13 @@ topics:
   -
     topic: /tf_static  # Topic name on both ROS 1 and ROS 2
     type: tf2_msgs/msg/TFMessage  # Type of topic to bridge
-    queue_size: 1  # Queue size
     qos:
       history: keep_all
       durability: transient_local
+      reliability: reliable
+
+  -
+    topic: /ee_goal_pose
+    type: geometry_msgs/msg/PoseStamped
+    queue_size: 1
+    

@@ -44,7 +44,7 @@ echo "[CORE] Isaac Sim PID: $ISAAC_PID"
 
 echo "[CORE] Waiting for Isaac Sim readiness signal..."
 
-while ! docker-compose exec isaac-sim test -f "$READY_FILE"; do
+while ! docker-compose exec -T isaac-sim test -f "$READY_FILE"; do
     sleep 1
 done
 

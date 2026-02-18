@@ -1,9 +1,42 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Status1
+        - /InteractiveMarkers1
+      Splitter Ratio: 0.5
+    Tree Height: 365
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.5886790156364441
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Name: Time
+    SyncMode: 0
+    SyncSource: ""
+Preferences:
+  PromptSaveOnExit: false
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
       Cell Size: 1
-      Class: rviz_default_plugins/Grid
+      Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
       Line Style:
@@ -19,667 +52,211 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Acceleration_Scaling_Factor: 0.1
-      Class: moveit_rviz_plugin/MotionPlanning
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
       Enabled: true
-      Move Group Namespace: ""
-      MoveIt_Allow_Approximate_IK: false
-      MoveIt_Allow_External_Program: false
-      MoveIt_Allow_Replanning: false
-      MoveIt_Allow_Sensor_Positioning: false
-      MoveIt_Planning_Attempts: 10
-      MoveIt_Planning_Time: 5
-      MoveIt_Use_Cartesian_Path: false
-      MoveIt_Use_Constraint_Aware_IK: false
-      MoveIt_Workspace:
-        Center:
-          X: 0
-          Y: 0
-          Z: 0
-        Size:
-          X: 2
-          Y: 2
-          Z: 2
-      Name: MotionPlanning
-      Planned Path:
-        Color Enabled: false
-        Interrupt Display: false
-        Links:
-          All Links Enabled: true
-          Expand Joint Details: false
-          Expand Link Details: false
-          Expand Tree: false
-          Link Tree Style: Links in Alphabetic Order
-          arm_link_el0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_el1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_fngr:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_hr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          body:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          front_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          rear_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-        Loop Animation: true
-        Robot Alpha: 0.5
-        Robot Color: 150; 50; 150
-        Show Robot Collision: false
-        Show Robot Visual: true
-        Show Trail: false
-        State Display Time: 0.05 s
-        Trail Step Size: 1
-        Trajectory Topic: display_planned_path
-        Use Sim Time: false
-      Planning Metrics:
-        Payload: 1
-        Show Joint Torques: false
-        Show Manipulability: false
-        Show Manipulability Index: false
-        Show Weight Limit: false
-        TextHeight: 0.07999999821186066
-      Planning Request:
-        Colliding Link Color: 255; 0; 0
-        Goal State Alpha: 1
-        Goal State Color: 250; 128; 0
-        Interactive Marker Size: 0
-        Joint Violation Color: 255; 0; 255
-        Planning Group: arm
-        Query Goal State: true
-        Query Start State: false
-        Show Workspace: false
-        Start State Alpha: 1
-        Start State Color: 0; 255; 0
-      Planning Scene Topic: monitored_planning_scene
-      Robot Description: robot_description
-      Scene Geometry:
-        Scene Alpha: 1
-        Scene Color: 50; 230; 50
-        Scene Display Time: 0.009999999776482582
-        Show Scene Geometry: true
-        Voxel Coloring: Z-Axis
-        Voxel Rendering: Occupied Voxels
-      Scene Robot:
-        Attached Body Color: 150; 50; 150
-        Links:
-          All Links Enabled: true
-          Expand Joint Details: false
-          Expand Link Details: false
-          Expand Tree: false
-          Link Tree Style: Links in Alphabetic Order
-          arm_link_el0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_el1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_fngr:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_hr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          body:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          front_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          rear_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-        Robot Alpha: 0.5
-        Show Robot Collision: false
-        Show Robot Visual: true
-      Value: true
-      Velocity_Scaling_Factor: 0.1
-    - Class: rviz_default_plugins/Image
-      Enabled: false
-      Max Value: 10
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: false
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /zed/zed_node/rgb/image_rect_color
-      Value: false
-    - Class: rviz_default_plugins/Image
-      Enabled: false
-      Max Value: 10
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: false
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /cumotion/camera_1/robot_mask
-      Value: false
-    - Class: rviz_default_plugins/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: false
-        Mesh:
-          Value: false
-        arm0_link_fngr:
-          Value: false
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
         arm_link_el0:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_el1:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_fngr:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_hr0:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_sh0:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_sh1:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_wr0:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         arm_link_wr1:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         base:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         body:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_hip:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_lower_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_upper_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_rail:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         front_right_hip:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_right_lower_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_right_upper_leg:
-          Value: false
-        hand_cam:
-          Value: false
-        lever_pivot:
-          Value: false
-        low_level/odom:
-          Value: false
-        low_level/vision:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_hip:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_lower_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_upper_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_rail:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         rear_right_hip:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_right_lower_leg:
-          Value: false
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_right_upper_leg:
-          Value: false
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: false
-      Tree:
-        body:
-          arm_link_sh0:
-            arm_link_sh1:
-              arm_link_hr0:
-                arm_link_el0:
-                  arm_link_el1:
-                    arm_link_wr0:
-                      arm_link_wr1:
-                        arm_link_fngr:
-                          {}
-          base:
-            {}
-          front_left_hip:
-            front_left_upper_leg:
-              front_left_lower_leg:
-                {}
-          front_rail:
-            {}
-          front_right_hip:
-            front_right_upper_leg:
-              front_right_lower_leg:
-                {}
-          low_level/odom:
-            {}
-          low_level/vision:
-            {}
-          rear_left_hip:
-            rear_left_upper_leg:
-              rear_left_lower_leg:
-                {}
-          rear_rail:
-            {}
-          rear_right_hip:
-            rear_right_upper_leg:
-              rear_right_lower_leg:
-                {}
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
       Update Interval: 0
       Value: true
-    - Class: nvblox_rviz_plugin/NvbloxMesh
-      Enabled: false
-      Name: NvbloxMesh
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: System Default
-        Reliability Policy: Reliable
-        Value: /nvblox_node/mesh
-      Value: false
-    - Class: moveit_rviz_plugin/PlanningScene
+      Visual Enabled: true
+    - Class: rviz/InteractiveMarkers
+      Enable Transparency: true
       Enabled: true
-      Move Group Namespace: ""
-      Name: PlanningScene
-      Planning Scene Topic: /monitored_planning_scene
-      Robot Description: robot_description
-      Scene Geometry:
-        Scene Alpha: 0.8999999761581421
-        Scene Color: 50; 230; 50
-        Scene Display Time: 0.009999999776482582
-        Show Scene Geometry: true
-        Voxel Coloring: Z-Axis
-        Voxel Rendering: Occupied Voxels
-      Scene Robot:
-        Attached Body Color: 150; 50; 150
-        Links:
-          All Links Enabled: true
-          Expand Joint Details: false
-          Expand Link Details: false
-          Expand Tree: false
-          Link Tree Style: Links in Alphabetic Order
-          arm_link_el0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_el1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_fngr:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_hr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_sh1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          arm_link_wr1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          body:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          front_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          front_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_left_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_rail:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          rear_right_hip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_lower_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          rear_right_upper_leg:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-        Robot Alpha: 1
-        Show Robot Collision: false
-        Show Robot Visual: true
+      Name: InteractiveMarkers
+      Show Axes: false
+      Show Descriptions: true
+      Show Visual Aids: false
+      Update Topic: /ee_marker_server/update
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
+    Default Light: true
     Fixed Frame: body
     Frame Rate: 30
   Name: root
   Tools:
-    - Class: rviz_default_plugins/Interact
+    - Class: rviz/Interact
       Hide Inactive Objects: true
-    - Class: rviz_default_plugins/MoveCamera
-    - Class: rviz_default_plugins/Select
-  Transformation:
-    Current:
-      Class: rviz_default_plugins/TF
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: /move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 3.009780168533325
+      Class: rviz/Orbit
+      Distance: 3.4432098865509033
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.4417199194431305
-        Y: 0.3946489989757538
-        Z: 0.8818802237510681
+        X: -0.23372779786586761
+        Y: -0.38508278131484985
+        Z: 0.6632418632507324
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4650004804134369
-      Target Frame: body
-      Value: Orbit (rviz_default_plugins)
-      Yaw: 1.8733494281768799
+      Pitch: 0.4353981018066406
+      Target Frame: <Fixed Frame>
+      Yaw: 3.2235822677612305
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: true
-  Height: 736
-  Help:
-    collapsed: false
+  Height: 800
   Hide Left Dock: true
-  Hide Right Dock: true
-  Image:
-    collapsed: true
-  MotionPlanning:
-    collapsed: true
-  MotionPlanning - Trajectory Slider:
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd000000040000000000000156000002b1fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730000000014000002b1000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f00000246fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003b00000246000000a000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004ba0000003efc0100000002fb0000000800540069006d00650000000000000004ba0000030700fffffffb0000000800540069006d00650100000000000004500000000000000000000005000000032000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730000000000ffffffff0000000000000000
+  Selection:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000001ba0000028afc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073000000003b000000fd000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a005600690065007700730000000277000000a0000000a000fffffffb0000000a0049006d006100670065000000013e000000640000002800fffffffb0000000a0049006d00610067006500000001a80000011d0000002800ffffff00000001000002960000028afc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b0000028a0000016900ffffff000004ba000002b100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730000000000ffffffff0000000000000000
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
   Views:
     collapsed: false
-  Width: 1210
-  X: 70
-  Y: 27
+  Width: 1280
+  X: 0
+  Y: 0

@@ -66,7 +66,7 @@ class PipelineController:
 
         while True:
             result = subprocess.run(
-                ["docker-compose", "exec", "isaac-sim", "test", "-f", READY_FILE],
+                ["docker-compose", "exec", "-T", "isaac-sim", "test", "-f", READY_FILE],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -88,3 +88,26 @@ class PipelineController:
             preexec_fn= os.setsid
         )
         self.processes = {}
+
+    def openGripper(self):
+        print("[PIPELINE] Sending open gripper command")
+        subprocess.Popen(
+            ["bash", "-lc", "/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/open_gripper.sh"],
+            stdin=sys.stdin,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True,
+            preexec_fn= os.setsid
+        )
+
+
+    def closeGripper(self):
+        print("[PIPELINE] Sending close gripper command")
+        subprocess.Popen(
+            ["bash", "-lc", "/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/close_gripper.sh"],
+            stdin=sys.stdin,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            text=True,
+            preexec_fn= os.setsid
+        )

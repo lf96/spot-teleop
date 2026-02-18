@@ -31,6 +31,8 @@ ROS_INFO("[RVIZ_PANEL] Setting up RViz visualization Frame...");
 
     // Create the Visualization Manager
     manager_ = frame_->getManager();
+    frame_->setFullScreen(true);
+
     if (!manager_) {
       ROS_ERROR("[RVIZ_PANEL] Failed to get Visualization Manager from frame.");
       return;

@@ -19,18 +19,19 @@ def run_pipeline_async(name):
     try:
         pipeline.start_pipeline(name)
     except Exception as e:
-        print(f"[HOST] Error starting pipeline: {e}")
+        print(f"[HOST] Error starting pipeline: {e}", flush=True)
 
 def stop_pipeline_async():
     try:
         pipeline.stop()
     except Exception as e:
-        print(f"[HOST] Error stopping pipeline: {e}")
+        print(f"[HOST] Error stopping pipeline: {e}", flush=True)
+
 
 while True:
-    print("[HOST] Waiting for pipeline controller connection...")
+    print("[HOST] Waiting for pipeline controller connection...", flush=True)
     conn, _ = sock.accept()
-    print("[HOST] Pipeline controller connected")
+    print("[HOST] Pipeline controller connected", flush=True)
 
     try:
         while True:
@@ -38,7 +39,7 @@ while True:
             if not data:
                 break
             command = data.decode().strip()
-            print(f"[HOST] Received command: {command}")
+            print(f"[HOST] Received command: {command}", flush=True)
 
             if command == "stop":
                 threading.Thread(
@@ -46,6 +47,20 @@ while True:
                     daemon=True
                     ).start()
                 conn.sendall(b"Stop command received\n")
+                continue
+            if command == "open_gripper":
+                threading.Thread(
+                    target=pipeline.openGripper, 
+                    daemon=True
+                    ).start()
+                conn.sendall(b"Open gripper command received\n")
+                continue
+            if command == "close_gripper":
+                threading.Thread(
+                    target=pipeline.closeGripper, 
+                    daemon=True
+                    ).start()
+                conn.sendall(b"Close gripper command received\n")
                 continue
             else:
                 threading.Thread(
@@ -57,8 +72,8 @@ while True:
                 conn.sendall(f"Pipeline '{command}' started".encode())
             
     except Exception as e:
-        print(f"[HOST] Connection error: {e}")
+        print(f"[HOST] Connection error: {e}", flush=True)
         conn.sendall(f"Error: {e}".encode())
     finally:
         conn.close()
-        print("[HOST] Pipeline controller disconnected")
+        print("[HOST] Pipeline controller disconnected", flush=True)

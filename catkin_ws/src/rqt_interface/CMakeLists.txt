@@ -6,6 +6,10 @@ add_compile_options(-std=c++14)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rviz
+  interactive_markers
+  visualization_msgs
+  geometry_msgs
+  tf
 )
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
@@ -32,8 +36,21 @@ add_executable(rqt_interface
   include/pipeline_controller.hpp
 )
 
+add_executable(ee_marker_node
+  src/ee_marker_node.cpp
+)
+
 target_link_libraries(rqt_interface
   Qt5::Widgets
   ${catkin_LIBRARIES}
   yaml-cpp
+)
+
+target_link_libraries(ee_marker_node
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(ee_marker_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
 )

@@ -22,8 +22,16 @@
   <build_depend>geometry_msgs</build_depend>
   <build_depend>moveit_servo</build_depend>
   <build_depend>moveit_ros_planning</build_depend>
-
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_ros_move_group</build_depend>
+  <build_depend>moveit_core</build_depend>
+  
+  <exec_depend>moveit_core</exec_depend>
   <exec_depend>rclcpp</exec_depend>
+  <exec_depend>rclcpp_action</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>shape_msgs</exec_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>moveit_servo</exec_depend>
