@@ -7,12 +7,15 @@ This repository contains multiple ROS2 workspaces for robotics with Boston Dynam
 * Main workspace for Spot ROS2 + RealSense + MoveIt
 * Workspace for ZED + Isaac ROS + NVBlox
 * Workspace for Isaac Sim + ZED Isaac Sim
+* NEW:
+* Workspace for GUI and pipeline management
+* Workspace for ROS1_bridge
 
 ## Cloning
 
 ```bash
 # Clone with all submodules
-git clone --recursive https://github.com/murilo-vinicius04/spot-teleop.git
+git clone --recursive -b feature/cumotion-integration https://github.com/lf96/spot-teleop
 cd spot-teleop
 
 # Or if you already cloned, initialize the submodules
@@ -43,9 +46,18 @@ docker-compose build
 docker-compose build spot-ros2
 docker-compose build zed
 docker-compose build isaac-sim
+docker-compose build rqt-interface
+docker-compose build ros-bridge
 ```
 
 ## Running
+
+### GUI + Pipeline
+Run startup.sh script
+
+```bash
+catkin_ws/src/rqt-interface/startup.sh
+```
 
 ### Spot ROS2 + RealSense
 
