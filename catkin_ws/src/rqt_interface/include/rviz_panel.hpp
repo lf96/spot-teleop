@@ -4,6 +4,8 @@
 #include <rviz/visualization_manager.h>
 #include <rviz/display_group.h>
 #include <rviz/display.h>
+#include <rviz/view_manager.h>
+#include <rviz/view_controller.h>
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <QWidget>
@@ -22,6 +24,7 @@ public:
 
 public slots:
   void setupRViz();
+  void resetView();
   
 private:
   rviz::VisualizationManager* manager_;

@@ -4,7 +4,13 @@ set -e
 COMPOSE="docker-compose"
 STACK_SERVICES=("rqt-interface" "ros-bridge")
 
-HOST_RUNNER_CMD="python3 -u /home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/host_pipeline_runner.py"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+PKG_DIR="$SCRIPT_DIR"
+
+WS_DIR="$(cd "$PKG_DIR/../.." && pwd)"
+
+HOST_RUNNER_CMD="python3 -u $PKG_DIR/scripts/utils/host_pipeline_runner.py"
 
 echo "=============================="
 echo " [GUI] Start GUI Bringup "
@@ -22,16 +28,11 @@ cleanup() {
         wait "$HOST_RUNNER_PID" 2>/dev/null || true
     fi
 
-    echo "[GUI] Stopping GUI ROS nodes..."
-    $COMPOSE exec -T rqt-interface bash -lc "pkill -f roslaunch" || true
-    $COMPOSE exec -T rqt-interface bash -lc "pkill -f rosrun" || true
-    $COMPOSE exec -T rqt-interface bash -lc "pkill -f roscore" || true
-
     echo "[GUI] Stopping containers..."
     for svc in "${STACK_SERVICES[@]}"; do
         $COMPOSE stop $svc || true
     done
-    /home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/shutdown/00_all.sh
+    $PKG_DIR/scripts/shutdown/00_all.sh
 
     echo "[GUI] Shutdown complete"
     exit 0
@@ -41,7 +42,7 @@ trap cleanup SIGINT SIGTERM
 
 echo "[GUI] Starting rqt container..."
 $COMPOSE up -d rqt-interface
-/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh rqt-interface
+$PKG_DIR/scripts/utils/wait_for_container.sh rqt-interface
 
 echo "[GUI] Checking ROS master..."
 if $COMPOSE exec -T rqt-interface bash -lc "source /opt/ros/noetic/setup.bash && rostopic list >/dev/null 2>&1"; then
@@ -54,7 +55,7 @@ fi
 
 echo "[GUI] Starting ROS bridge..."
 $COMPOSE up -d ros-bridge
-/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh ros-bridge
+$PKG_DIR/scripts/utils/wait_for_container.sh ros-bridge
 
 echo "[GUI] Launching description..."
 $COMPOSE exec -d rqt-interface bash -lc "
@@ -68,6 +69,13 @@ $COMPOSE exec -d rqt-interface bash -lc "
 source /opt/ros/noetic/setup.bash &&
 source /home/spot-teleop/catkin_ws/devel/setup.bash &&
 rosrun rqt_interface ee_marker_node
+"
+
+echo "[GUI] Launching Rubik's cube marker..."
+$COMPOSE exec -d rqt-interface bash -lc "
+source /opt/ros/noetic/setup.bash &&
+source /home/spot-teleop/catkin_ws/devel/setup.bash &&
+rosrun rqt_interface rubiks_cube_marker_node
 "
 
 sleep 5
@@ -85,5 +93,6 @@ source /opt/ros/noetic/setup.bash &&
 source /home/spot-teleop/catkin_ws/devel/setup.bash &&
 rosrun rqt_interface rqt_interface > /dev/null 2>&1
 "
+sleep 1
 
 cleanup

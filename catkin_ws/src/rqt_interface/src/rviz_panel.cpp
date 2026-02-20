@@ -11,6 +11,24 @@ RVizPanel::RVizPanel(QWidget *parent)
   layout_->setContentsMargins(0, 0, 0, 0);
   setLayout(layout_);
 }
+void RVizPanel::resetView()
+{
+  if(!manager_) {
+    ROS_ERROR("[RVIZ_PANEL] Cannot reset view: Visualization Manager is null.");
+    return;
+  }
+  rviz::ViewManager* view_manager = manager_->getViewManager();
+  if (!view_manager)
+    return;
+
+  rviz::ViewController* current_view = view_manager->getCurrent();
+  if (!current_view)
+    return;
+
+  current_view->reset();
+  manager_->resetTime();
+  manager_->queueRender();
+}
 void RVizPanel::setupRViz()
 {
 ROS_INFO("[RVIZ_PANEL] Setting up RViz visualization Frame...");

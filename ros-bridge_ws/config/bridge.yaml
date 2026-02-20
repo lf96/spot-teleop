@@ -17,3 +17,10 @@ topics:
     type: geometry_msgs/msg/PoseStamped
     queue_size: 1
     
+  -
+    topic: /monitored_planning_scene
+    type: moveit_msgs/msg/PlanningScene
+    queue_size: 1
+    qos:
+      durability: volatile
+      reliability: reliable

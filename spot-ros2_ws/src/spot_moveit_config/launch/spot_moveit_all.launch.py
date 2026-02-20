@@ -235,16 +235,16 @@ def launch_setup(context, *args, **kwargs):
 
     # RViz node, também com parâmetros do MoveIt e remapeamentos
 
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        output="screen",
-        arguments=["-d", PathJoinSubstitution([FindPackageShare("spot_moveit_config"), "config", "moveit.rviz"])],
-        parameters=[
-            moveit_cfg.to_dict(),
-        ],
-        remappings=remappings,
-    )
+    # rviz_node = Node(
+    #     package="rviz2",
+    #     executable="rviz2",
+    #     output="screen",
+    #     arguments=["-d", PathJoinSubstitution([FindPackageShare("spot_moveit_config"), "config", "moveit.rviz"])],
+    #     parameters=[
+    #         moveit_cfg.to_dict(),
+    #     ],
+    #     remappings=remappings,
+    # )
 
     # SUB Node para goal pose vinda da GUI
     ee_goal_executor_node = Node(
@@ -282,7 +282,7 @@ def launch_setup(context, *args, **kwargs):
     # Grupo com use_sim_time=True para nós que consomem estado/TF/sensores
     sim_timer_actions = [
         robot_state_publisher_node,
-        rviz_node,
+        # rviz_node,
         rviz_refresh_timer,
         ee_goal_executor_node,
         proxy_node,

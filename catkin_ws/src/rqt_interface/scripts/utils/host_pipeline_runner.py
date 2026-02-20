@@ -2,15 +2,24 @@ from pipeline_controller import PipelineController
 import os
 import socket
 import threading
+from pathlib import Path
 
-SOCKET_PATH = "/home/nexus/ipc/pipeline_controller.sock"
+SCRIPT_DIR = Path(__file__).resolve().parent
 
-if os.path.exists(SOCKET_PATH):
-    os.remove(SOCKET_PATH)
+PKG_DIR = SCRIPT_DIR.parent.parent
+
+IPC_DIR = PKG_DIR / "ipc"
+IPC_DIR.mkdir(exist_ok=True)
+
+SOCKET_PATH = IPC_DIR / "pipeline_controller.sock"
+
+if SOCKET_PATH.exists():
+    SOCKET_PATH.unlink()
+
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-sock.bind(SOCKET_PATH)
-os.chmod(SOCKET_PATH, 0o666)
+sock.bind(str(SOCKET_PATH))
+os.chmod(str(SOCKET_PATH), 0o666)
 sock.listen(1)
 
 pipeline = PipelineController()

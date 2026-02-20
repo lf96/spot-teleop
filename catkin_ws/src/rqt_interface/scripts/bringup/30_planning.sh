@@ -7,8 +7,14 @@ echo "=============================="
 
 docker-compose up -d spot-ros2
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+PKG_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+WS_DIR="$(cd "$PKG_DIR/../.." && pwd)"
+
 echo "[PLANNING] Waiting for SPOT-ROS2 container..."
-/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh spot-ros2
+$PKG_DIR/scripts/utils/wait_for_container.sh spot-ros2
 
 echo "[PLANNING] SPOT-ROS2 Container is running"
 

@@ -6,4 +6,4 @@ echo "=============================="
 echo "[SHUTDOWN] Shutting down all services"
 echo "=============================="
 
-docker-compose kill isaac-sim zed spot-ros2
+docker-compose stop isaac-sim zed spot-ros2

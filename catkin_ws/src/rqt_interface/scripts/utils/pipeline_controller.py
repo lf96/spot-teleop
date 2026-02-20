@@ -5,12 +5,17 @@ import subprocess
 import time
 import sys
 import os
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent # rqt_interface/scripts/utils/
+
+PKG_DIR = SCRIPT_DIR.parent.parent # rqt_interface/
 
 class PipelineController:
     def __init__(self):
         self.processes = {}
 
-        with open("/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/config/pipelines.yaml") as f:
+        with open(PKG_DIR / "config" / "pipelines.yaml") as f:
             self.cfg = yaml.safe_load(f)["pipelines"]
 
     def start_pipeline(self, name):
@@ -27,7 +32,7 @@ class PipelineController:
             
             print(f"[PIPELINE] Starting stage: {stage['name']} with script: {script}")
             proc = ProcessController()
-            proc.start(script)
+            proc.start(str((PKG_DIR / script).resolve()))
             
             self.processes[stage_name] = proc
 
@@ -80,7 +85,7 @@ class PipelineController:
             print(f"[PIPELINE] Stopping process: {name}")
             proc.stop()
         self.process = subprocess.Popen(
-            ["bash", "-lc", "/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/shutdown/00_all.sh"],
+            ["bash", "-lc", str((PKG_DIR / "scripts" / "shutdown" / "00_all.sh").resolve())],
             stdin=sys.stdin,
             stdout=sys.stdout,
             stderr=sys.stderr,
@@ -92,7 +97,7 @@ class PipelineController:
     def openGripper(self):
         print("[PIPELINE] Sending open gripper command")
         subprocess.Popen(
-            ["bash", "-lc", "/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/open_gripper.sh"],
+            ["bash", "-lc", str((PKG_DIR / "scripts" / "utils" / "open_gripper.sh").resolve())],
             stdin=sys.stdin,
             stdout=sys.stdout,
             stderr=sys.stderr,
@@ -104,7 +109,7 @@ class PipelineController:
     def closeGripper(self):
         print("[PIPELINE] Sending close gripper command")
         subprocess.Popen(
-            ["bash", "-lc", "/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/close_gripper.sh"],
+            ["bash", "-lc", str((PKG_DIR / "scripts" / "utils" / "close_gripper.sh").resolve())],
             stdin=sys.stdin,
             stdout=sys.stdout,
             stderr=sys.stderr,

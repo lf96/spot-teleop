@@ -7,8 +7,14 @@ echo "=============================="
 
 docker-compose up -d zed
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+PKG_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+WS_DIR="$(cd "$PKG_DIR/../.." && pwd)"
+
 echo "[MAPPING] Waiting for ZED container..."
-/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh zed
+$PKG_DIR/scripts/utils/wait_for_container.sh zed
 
 echo "[MAPPING] ZED Container is running"
 

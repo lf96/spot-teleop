@@ -9,8 +9,14 @@ echo "=============================="
 
 docker-compose up -d isaac-sim
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+PKG_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+WS_DIR="$(cd "$PKG_DIR/../.." && pwd)"
+
 echo "[CORE] Waiting for Isaac container..."
-/home/nexus/spot-teleop/catkin_ws/src/rqt_interface/scripts/utils/wait_for_container.sh isaac-sim
+$PKG_DIR/scripts/utils/wait_for_container.sh isaac-sim
 
 echo "[CORE] Isaac Container is running"
 
@@ -27,7 +33,7 @@ docker-compose exec -d isaac-sim bash -c "
 
     cd /isaac-sim && \
     ./kit/kit \
-        ./apps/isaacsim.exp.full.kit \
+        ./apps/isaacsim.exp.full.streaming.kit \
         --headless \
         --no-window \
         --allow-root \

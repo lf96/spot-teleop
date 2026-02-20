@@ -1,0 +1,17 @@
+is_diff: true
+world:
+  collision_objects:
+    - id: box1
+      header:
+        frame_id: body
+      operation: ADD
+      primitives:
+        - type: 1
+          dimensions: [0.1, 0.1, 0.1]
+      primitive_poses:
+        - position:
+            x: 0.6
+            y: 0.0
+            z: 0.2
+          orientation:
+            w: 1.0

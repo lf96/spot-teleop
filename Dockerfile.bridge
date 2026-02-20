@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     ca-certificates \
     build-essential \
-    cmake \
     git \
     python3 \
     python3-pip \
@@ -25,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     software-properties-common \
     libeigen3-dev \
+    wget \
     && add-apt-repository universe \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
@@ -79,6 +79,10 @@ RUN python3 -m pip install --upgrade pip \
       rosdep \
       colcon-common-extensions \
       vcstool \
+      typeguard \
+      jinja2 \
+      lark-parser \
+      packaging \
       flake8-blind-except \
       flake8-builtins \
       flake8-class-newline \
@@ -93,11 +97,7 @@ RUN python3 -m pip install --upgrade pip \
 # --------------------------------------------------
 # 6. ROS 2 Humble (source build)
 # --------------------------------------------------
-RUN echo "deb http://packages.ros.org/ros2/ubuntu focal main" \
-      > /etc/apt/sources.list.d/ros2.list \
- && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - \
- && apt-get update \
- && apt-get install -y \
+RUN  apt-get update && apt-get install -y \
       python3-argcomplete \
       python3-lark \
       python3-numpy \
@@ -115,12 +115,27 @@ RUN echo "deb http://packages.ros.org/ros2/ubuntu focal main" \
       libxcursor-dev \
       libxi-dev \
       libxt-dev \
-      xorg-dev \ 
+      xorg-dev \
       libgl1-mesa-dev \
       libglu1-mesa-dev \
       freeglut3-dev \
       mesa-common-dev \
       && rm -rf /var/lib/apt/lists/*
+
+# --------------------------------------------------
+# Manually install packages that are missing and required by ros2 packages
+# --------------------------------------------------
+RUN apt-get update && apt-get install -y wget \
+ && cd /tmp \
+ && wget https://github.com/Kitware/CMake/releases/download/v3.22.6/cmake-3.22.6-linux-x86_64.sh \
+ && chmod +x cmake-3.22.6-linux-x86_64.sh \
+ && ./cmake-3.22.6-linux-x86_64.sh --skip-license --prefix=/usr/local \
+ && rm cmake-3.22.6-linux-x86_64.sh
+
+# Ensure new cmake is used
+ENV PATH="/usr/local/bin:${PATH}"
+ENV CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake:$CMAKE_PREFIX_PATH
+
 
 # --------------------------------------------------
 # 7. Workspace

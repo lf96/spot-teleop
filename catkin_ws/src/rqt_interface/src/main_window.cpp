@@ -30,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
     log->append("Stop button clicked");
     pipeline_controller_->stop();
   });
+  reset_view_btn = new QPushButton("Reset View");
+  reset_view_btn->connect(reset_view_btn, &QPushButton::clicked, [this]() {
+    log->append("Reset View button clicked");
+    rviz_panel_->resetView();
+  });
 
   // Gripper Control Buttons
   open_gripper_btn = new QPushButton("Open Gripper");
@@ -51,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   controls_layout->addWidget(start_btn);
   controls_layout->addWidget(stop_btn);
+  controls_layout->addWidget(reset_view_btn);
   controls_layout->addWidget(log);
   gripper_layout->addWidget(open_gripper_btn);
   gripper_layout->addWidget(close_gripper_btn);

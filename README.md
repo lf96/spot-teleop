@@ -53,10 +53,10 @@ docker-compose build ros-bridge
 ## Running
 
 ### GUI + Pipeline
-Run startup.sh script
+Run startup script
 
 ```bash
-catkin_ws/src/rqt-interface/startup.sh
+catkin_ws/src/rqt-interface/startup
 ```
 
 ### Spot ROS2 + RealSense
