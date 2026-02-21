@@ -55,3 +55,8 @@
 	path = spot-ros2_ws/moveit_task_constructor
 	url = https://github.com/ros-planning/moveit_task_constructor.git
 	branch = humble
+
+[submodule "spot-ros2_ws/src/moveit2_tutorials"]
+	path = spot-ros2_ws/src/moveit2_tutorials
+	url = https://github.com/ros-planning/moveit2_tutorials.git
+	branch = humble
