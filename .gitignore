@@ -42,3 +42,4 @@ rosbag*
 .rviz/*
 
 spot-ros2_ws/src/spot_tf_tools/test/
+spot-ros2_ws/src/spot_operation_ros2/spot_operation_ros2/__pycache__
