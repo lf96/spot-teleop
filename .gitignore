@@ -20,9 +20,11 @@ cleanup_push.sh
 */install/
 */build/
 */log/
+*/devel/
 
 # Cache files
 */__pycache__/
+*/__pycache__/*
 .bash*
 .wget*
 /.cache/
@@ -37,3 +39,6 @@ cuda-keyring*
 rosbag*
 .config/*
 .rviz2/*
+.rviz/*
+
+spot-ros2_ws/src/spot_tf_tools/test/

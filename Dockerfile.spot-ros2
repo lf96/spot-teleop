@@ -1,5 +1,7 @@
-# Use official Ubuntu 22.04 base image
-FROM nvidia/cuda:12.8.1-devel-ubuntu22.04
+# Use official nvidia ROS 2 Humble image as base
+FROM nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_f247dd1051869171c3fc53bb35f6b907
+
+RUN rm -f /etc/apt/sources.list.d/yarn*.list || true
 
 # Set noninteractive mode for APT
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,31 +18,6 @@ RUN apt-get update && apt-get install -y \
     && locale-gen en_US.UTF-8 \
     && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-# Install Node.js 22.x
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y nodejs
-
-# Pré-reqs básicos
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl gnupg lsb-release && rm -rf /var/lib/apt/lists/*
-
-# Limpa qualquer configuração antiga de ROS (evita conflito de chaves/listas)
-RUN rm -f /etc/apt/sources.list.d/ros2.list \
-    && rm -f /usr/share/keyrings/ros-archive-keyring.gpg
-
-# Instala o pacote que configura repo + chave GPG do ROS 2
-RUN set -eux; \
-    export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | \
-        grep -F "tag_name" | awk -F\" '{print $4}'); \
-    curl -L -o /tmp/ros2-apt-source.deb \
-        "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"; \
-    dpkg -i /tmp/ros2-apt-source.deb; \
-    rm -f /tmp/ros2-apt-source.deb
-
-# Atualiza índices após configurar o repositório
-RUN apt-get update
-
-
 # Add Intel RealSense repository (with lsb-release)
 RUN apt-get update && apt-get install -y \
     gnupg \
@@ -50,44 +27,15 @@ RUN apt-get update && apt-get install -y \
     && apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-RUN apt-get update -q && \
-    apt-get install -yq --no-install-recommends \
-    # Ferramentas de build
-    build-essential cmake ninja-build git \
-    # Ament (CMake + módulo Python) — corrige "No module named 'ament_package'"
-    ros-humble-ament-cmake \
-    libeigen3-dev libyaml-cpp-dev \
-    python3-ament-package \
-    wget \ 
-    software-properties-common \ 
+# Pré-reqs básicos
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    librealsense2-utils \
+    librealsense2-dev \
+    librealsense2-dbg \
+    udev \
+    usbutils \
     python3-pip \
-    python-is-python3 \
-    python3-argcomplete \
-    python3-colcon-common-extensions \
-    python3-colcon-mixin \
-    python3-rosdep \
-    libpython3-dev \
     python3-tk \
-    python3-typing-extensions \
-    python3-pytest-cov \
-    python3-protobuf \
-    python3-vcstool \
-    ros-humble-cv-bridge \
-    ros-humble-ament-cmake-auto \
-    ros-humble-desktop \
-    ros-dev-tools \
-    ros-humble-object-recognition-msgs \
-    # RTAB-Map packages
-    ros-humble-rtabmap-ros \
-    ros-humble-octomap-server \
-    # Controller packages
-    ros-humble-ros2-control \
-    ros-humble-ros2-controllers \
-    ros-humble-controller-manager \
-    ros-humble-controller-interface \
-    ros-humble-hardware-interface \
-    ros-humble-forward-command-controller \
     # Moveit packages
     ros-humble-moveit \
     ros-humble-moveit-common \
@@ -98,28 +46,7 @@ RUN apt-get update -q && \
     ros-humble-moveit-plugins \
     ros-humble-moveit-ros-perception \
     ros-humble-magic-enum \
-    # RealSense packages
-    udev usbutils \
-    librealsense2-utils librealsense2-dev librealsense2-dbg \
-    ros-humble-realsense2-camera ros-humble-realsense2-description \
     && rm -rf /var/lib/apt/lists/*
-
-
-### 5) rosdep OFFLINE: apontar para YAMLs locais (vendorizados)
-COPY third_party/rosdistro/ /opt/rosdistro/
-ENV ROSDISTRO_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
-# (Opcional, redundante, mas ajuda em ambientes custom)
-ENV ROSDEP_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
-RUN set -eux; \
-    mkdir -p /etc/ros/rosdep/sources.list.d; \
-    rm -f /etc/ros/rosdep/sources.list.d/*.list; \
-    printf '%s\n' \
-      'yaml file:///opt/rosdistro/rosdep/base.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/python.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/ruby.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/osx-homebrew.yaml' \
-      > /etc/ros/rosdep/sources.list.d/20-default.list; \
-    rosdep update
 
 # Set up workspace
 WORKDIR /home/spot-teleop/spot-ros2_ws
@@ -140,24 +67,25 @@ ENV USER=root
 # Create bashrc with ROS setup
 RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && \
     echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc
-    
-# Install VPI (Vision Programming Interface) packages
-RUN set -e; \
-    cd /tmp && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/libn/libnvvpi2/libnvvpi2_2.3.9_amd64.deb && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-dev/vpi2-dev_2.3.9_amd64.deb && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-samples/vpi2-samples_2.3.9_amd64.deb && \
-    apt-get install -y ./libnvvpi2_2.3.9_amd64.deb ./vpi2-dev_2.3.9_amd64.deb ./vpi2-samples_2.3.9_amd64.deb || \
-    apt-get -f install -y && \
-    rm -f *.deb
-    
+
 RUN pip install --upgrade pip "setuptools==69.5.1" "wheel>=0.43" && \
     pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy && \
     pip install --no-cache-dir --upgrade "sympy>=1.12" "mpmath>=1.3.0" --ignore-installed && \
     pip install bosdyn-api==5.0.1.2 bosdyn-client==5.0.1.2 bosdyn-core==5.0.1.2 bosdyn-mission==5.0.1.2 bosdyn-choreography-client==5.0.1.2
 
-# Install PyTorch (CUDA 12.x compatible)
-RUN pip install --no-cache-dir --ignore-installed torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+ENV CUDA_HOME=/usr/local/cuda
+ENV CUDAToolkit_ROOT=/usr/local/cuda
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+
+RUN rm -rf /usr/local/include/google \
+           /usr/local/lib/libprotobuf* \
+           /usr/local/lib/libprotoc* \
+           /usr/local/bin/protoc || true
+
+RUN apt-get update && apt-get install -y \
+    protobuf-compiler \
+    libprotobuf-dev
+
 
 # Set default command
 CMD ["/bin/bash"]

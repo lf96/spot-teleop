@@ -21,15 +21,15 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
     command: >
       bash -c "
+        export PATH=/usr/local/cuda/bin:$PATH &&
         source /opt/ros/humble/setup.bash &&
         if [ -f /home/spot-teleop/spot-ros2_ws/install/setup.bash ]; then
           echo 'Found existing build, sourcing setup...' &&
           source /home/spot-teleop/spot-ros2_ws/install/setup.bash
         else
-          echo 'No existing build found. You can build manually with: colcon build --symlink-install'
+          echo 'No existing build found.'
         fi &&
         echo '🎉 Container Spot ROS2 + RealSense pronto! ROS_DOMAIN_ID: 42' &&
-        echo 'Para buildar manualmente: colcon build --symlink-install' &&
         exec bash
       "
     stdin_open: true
@@ -185,6 +185,22 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    command: >
+      bash -c "
+        source /opt/ros/noetic/setup.bash &&
+        echo 'RQT workspace setup...' &&
+        if [ -f /home/spot-teleop/catkin_ws/devel/setup.bash ]; then
+          echo 'Found existing build, sourcing setup...' &&
+          source /home/spot-teleop/catkin_ws/devel/setup.bash
+        else
+          echo 'No existing build found' &&
+          cd /home/spot-teleop/catkin_ws &&
+          catkin_make &&
+          source devel/setup.bash
+        fi &&
+        echo '🎛️ Container RQT Interface pronto!' &&
+        exec bash
+      "
 
   ros-bridge:
     build:

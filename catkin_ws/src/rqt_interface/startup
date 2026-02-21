@@ -40,6 +40,11 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
+echo "[GUI] Starting host pipeline runner..."
+
+$HOST_RUNNER_CMD > /tmp/host_runner.log 2>&1 &
+HOST_RUNNER_PID=$!
+
 echo "[GUI] Starting rqt container..."
 $COMPOSE up -d rqt-interface
 $PKG_DIR/scripts/utils/wait_for_container.sh rqt-interface
@@ -80,10 +85,6 @@ rosrun rqt_interface rubiks_cube_marker_node
 
 sleep 5
 
-echo "[GUI] Starting host pipeline runner..."
-
-$HOST_RUNNER_CMD > /tmp/host_runner.log 2>&1 &
-HOST_RUNNER_PID=$!
 
 echo "[GUI] Host pipeline runner PID: $HOST_RUNNER_PID"
 
