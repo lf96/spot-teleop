@@ -60,3 +60,7 @@
 	path = spot-ros2_ws/src/moveit2_tutorials
 	url = https://github.com/ros-planning/moveit2_tutorials.git
 	branch = humble
+
+[submodule "zed_ws/src/magic_enum"]
+	path = zed_ws/src/magic_enum
+	url = https://github.com/Neargye/magic_enum
