@@ -164,7 +164,7 @@ services:
     volumes:
       - .:/home/spot-teleop
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ./catkin_ws/src/rqt_interface/ipc:/home/ipc:rw
+      - ./catkin_ws/src/rqt_interface/ipc:/home/ipc
     runtime: nvidia
     working_dir: /home/spot-teleop/catkin_ws
     environment:

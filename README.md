@@ -20,12 +20,6 @@ cd spot-teleop
 
 # Or if you already cloned, initialize the submodules
 git submodule update --init --recursive
-
-# Configure Git LFS for isaac_ros_nitros
-cd zed_ws/src/isaac_ros_nitros
-git lfs install
-git lfs pull
-cd ../../..
 ```
 
 ## Build with Docker
@@ -50,14 +44,9 @@ docker-compose build rqt-interface
 docker-compose build ros-bridge
 ```
 
-## Running
 
-### GUI + Pipeline
-Run startup script
+## Starting containers for development
 
-```bash
-catkin_ws/src/rqt-interface/startup
-```
 
 ### Spot ROS2 + RealSense
 
@@ -83,16 +72,22 @@ docker-compose up -d isaac-sim
 docker-compose up -d
 ```
 
+## Opening GUI + Pipeline
+Run startup script:
+
+```bash
+catkin_ws/src/rqt_interface/startup
+```
+
+> The workspace must be built inside the containers. Please start them at least once to perform an automatic build (`docker-compose up`)
+
 ## Included Submodules
 
 ### ZED Workspace
 
-* `isaac_ros_nitros` - NVIDIA Isaac ROS Nitros
-* `negotiated` - Negotiated QoS
 * `zed-ros2-wrapper` - ZED ROS2 Wrapper
 * `isaac_ros_nvblox` - NVIDIA Isaac ROS NVBlox
 * `zed-ros2-interfaces` - ZED ROS2 Interfaces
-* `isaac_ros_common` - NVIDIA Isaac ROS Common
 
 ### Spot ROS2 Workspace
 
@@ -107,42 +102,46 @@ docker-compose up -d
 
 * `zed-isaac-sim` - ZED Isaac Sim Integration
 
----
 
 ## Setting Up Spot ROS2 (inside the spot-ros2 container)
 
-1. Source the ROS2 environment:
+1. Attach docker shell to terminal
+   ```bash
+   docker-compose exec -it spot-ros2 bash
+   ```
+
+2. Source the ROS2 environment:
 
    ```bash
    source /opt/ros/humble/setup.bash
    ```
 
-2. Build the workspace with symlink install:
+3. Build the workspace with symlink install:
 
    ```bash
    colcon build --symlink-install --cmake-args -DBUILD_TESTING=OFF
    ```
 
-3. If encountering any errors, update and install dependencies:
+4. If encountering any errors, update and install dependencies:
 
    ```bash
    rosdep update
    rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
    ```
 
-4. Source the local install:
+5. Source the local install:
 
    ```bash
    source install/setup.bash
    ```
 
-5. To plan and execute with MoveIt:
+6. To plan and execute with MoveIt:
 
    ```bash
    ros2 launch spot_moveit_config spot_moveit_all.launch.py
    ```
 
-6. To run MoveIt Servo:
+7. To run MoveIt Servo:
 
    ```bash
    ros2 launch spot_moveit_config spot_pose_tracking.launch.py
@@ -152,37 +151,42 @@ docker-compose up -d
 
 ## Setting Up Isaac Sim with ZED Integration (inside the isaac-sim container)
 
-1. Navigate to the **`zed-isaac-sim`** folder and build:
+1. Attach docker shell to terminal
+   ```bash
+   docker-compose exec -it isaac-sim bash
+   ```
+
+2. Navigate to the **`zed-isaac-sim`** folder and build:
 
    ```bash
    cd zed-isaac-sim
    ./build.sh
    ```
 
-2. After the build completes, start Isaac Sim:
+3. After the build completes, start Isaac Sim:
 
    ```bash
    cd /isaac-sim
    ./runapp.sh
    ```
 
-3. When Isaac Sim opens, go to:
+4. When Isaac Sim opens, go to:
 
    * `Windows -> Extensions -> Third Party -> Settings`
    * Add a **User Dir** pointing to: `/workspace/zed-isaac-sim/exts`
 
    (Follow the [official ZED Isaac Sim README](https://github.com/stereolabs/zed-isaac-sim) for reference.)
 
-4. Enable the extensions and set them to **Auto Load**.
+5. Enable the extensions and set them to **Auto Load**.
 
-5. Restart Isaac Sim.
+6. Restart Isaac Sim.
 
-6. Open the provided scene:
+7. Open the provided scene:
 
    * `File -> Open`
    * Select: `/workspace/zed_streamer_warehouse`
 
-7. The scene should load and be ready for streaming. Click **Play** and check the terminal where Isaac Sim was launched. If you see:
+8. The scene should load and be ready for streaming. Click **Play** and check the terminal where Isaac Sim was launched. If you see:
 
    ```
    [Streaming] Use Transport layer mode : 0
@@ -194,25 +198,30 @@ docker-compose up -d
 
 ## Setting Up ZED Container and NVBlox Mapping
 
-1. Ensure the ROS2 environment is sourced:
+1. Attach docker shell to terminal
+   ```bash
+   docker-compose exec -it zed bash
+   ```
+
+2. Ensure the ROS2 environment is sourced:
 
    ```bash
    source /opt/ros/humble/setup.bash
    ```
 
-2. Build the workspace with the recommended flags:
+3. Build the workspace with the recommended flags:
 
    ```bash
    colcon build --merge-install --symlink-install --packages-skip nvblox_examples_bringup
    ```
 
-3. Source the local install:
+4. Source the local install:
 
    ```bash
    source install/setup.bash
    ```
 
-4. With Isaac Sim streaming, launch the ZED wrapper:
+5. With Isaac Sim streaming, launch the ZED wrapper:
 
    ```bash
    ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedx sim_mode:=true use_sim_time:=true
@@ -220,7 +229,7 @@ docker-compose up -d
 
    > This will optimize the ZED neural mode for your GPU. It may take several minutes on the first run.
 
-5. To visualize the NVBlox map, run the ZED example:
+6. To visualize the NVBlox map, run the ZED example:
 
    ```bash
    ros2 launch nvblox_examples_bringup zed_example.launch.py use_sim_time:=true
