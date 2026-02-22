@@ -120,7 +120,7 @@ docker-compose up -d
 2. Build the workspace with symlink install:
 
    ```bash
-   colcon build --symlink-install
+   colcon build --symlink-install --cmake-args -DBUILD_TESTING=OFF
    ```
 
 3. If encountering any errors, update and install dependencies:
@@ -203,7 +203,7 @@ docker-compose up -d
 2. Build the workspace with the recommended flags:
 
    ```bash
-   colcon build --merge-install --symlink-install
+   colcon build --merge-install --symlink-install --packages-skip nvblox_examples_bringup
    ```
 
 3. Source the local install:

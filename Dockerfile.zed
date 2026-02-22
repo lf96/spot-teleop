@@ -1,148 +1,78 @@
-# ===== ZED Camera Docker Image for Isaac ROS NITROS (x86_64 / Humble) =====
-FROM stereolabs/zed:5.0-devel-cuda12.8-ubuntu22.04
+# ============================================================
+# Isaac ROS Humble (base oficial NVIDIA)
+# ============================================================
+FROM nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_f247dd1051869171c3fc53bb35f6b907
 
-# Environment configuration
-ENV DEBIAN_FRONTEND=noninteractive \
-    TZ=Etc/UTC \
-    LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8 \
-    # Ensure LFS performs automatic smudge
-    GIT_LFS_SKIP_SMUDGE=0
+# Evita conflitos antigos (ex: yarn)
+RUN rm -f /etc/apt/sources.list.d/yarn*.list || true
 
-# Use bash shell for RUN commands (to allow 'source' command)
-SHELL ["/bin/bash", "-lc"]
+ENV DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-c"]
 
-# ---------- ROS 2 Humble + rosdep OFFLINE [Git Outage Oct-25] ----------
-### 1) Pré-reqs de sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates curl gnupg lsb-release locales \
-      build-essential git python3-pip python3-venv \
-      libboost-all-dev \
-    && locale-gen en_US.UTF-8 \
-    && rm -rf /var/lib/apt/lists/*
-
-### 2) Repositório APT do ROS 2
-RUN set -eux; \
-    UBUNTU_CODENAME=$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}}); \
-    ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | \
-      awk -F'"' '/tag_name/{print $4}'); \
-    curl -L -o /tmp/ros2-apt-source.deb \
-      "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.${UBUNTU_CODENAME}_all.deb"; \
-    dpkg -i /tmp/ros2-apt-source.deb; \
-    rm -f /tmp/ros2-apt-source.deb; \
-    apt-get update
-
-### 3) ROS mínimo para ZED
-RUN apt-get install -y --no-install-recommends \
-      ros-humble-ros-base \
-      ros-humble-image-transport \
-      ros-humble-camera-info-manager \
-      ros-humble-compressed-image-transport \
-      ros-humble-diagnostic-updater \
-      ros-humble-rviz2 \
-      ros-humble-vision-msgs \
-      ros-humble-foxglove-msgs \
-      ros-humble-nmea-msgs \
-      ros-humble-navigation2 \
-      ros-humble-geographic-msgs \
-      ros-humble-backward-ros \
-      ros-humble-robot-localization \
-      ros-humble-point-cloud-transport \
-      ros-humble-xacro \
-      ros-humble-robot-state-publisher \
-      ros-humble-joint-state-publisher \
-      ros-humble-robot-localization \
-      ros-humble-point-cloud-transport \
-    && rm -rf /var/lib/apt/lists/*
-
-### 4) rosdep/colcon/vcstool via PyPI (evita dependência de pacotes Ubuntu/GitHub)
-RUN python3 -m pip install --no-cache-dir --upgrade pip \
- && python3 -m pip install --no-cache-dir \
-      rosdep vcstool colcon-common-extensions
-
-### 5) rosdep OFFLINE: apontar para YAMLs locais (vendorizados)
-COPY third_party/rosdistro/ /opt/rosdistro/
-ENV ROSDISTRO_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
-# (Opcional, redundante, mas ajuda em ambientes custom)
-ENV ROSDEP_INDEX_URL=file:///opt/rosdistro/index-v4.yaml
-RUN set -eux; \
-    mkdir -p /etc/ros/rosdep/sources.list.d; \
-    rm -f /etc/ros/rosdep/sources.list.d/*.list; \
-    printf '%s\n' \
-      'yaml file:///opt/rosdistro/rosdep/base.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/python.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/ruby.yaml' \
-      'yaml file:///opt/rosdistro/rosdep/osx-homebrew.yaml' \
-      > /etc/ros/rosdep/sources.list.d/20-default.list; \
-    rosdep update
-    
-### Source ROS
-RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc && \
-    echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc
-
-# Setup workspace directory
-ENV WS=/home/spot_ws/zed_ws
-ENV ISAAC_ROS_WS=/home/spot_ws/zed_ws
-RUN mkdir -p $WS/src
-WORKDIR $WS
-
-# Install additional dependencies for NVBLOX (Google Benchmark)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libbenchmark-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install gflags and glog libraries
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgflags-dev \
-    libgoogle-glog-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install CV-CUDA (NVCV): runtime + dev packages (provides <nvcv/Tensor.hpp>)
-ARG CVCUDA_VER=v0.15.0-beta
-ARG CVCUDA_LIB_DEB=https://github.com/CVCUDA/CV-CUDA/releases/download/${CVCUDA_VER}/cvcuda-lib-0.15.0-cuda12-x86_64-linux.deb
-ARG CVCUDA_DEV_DEB=https://github.com/CVCUDA/CV-CUDA/releases/download/${CVCUDA_VER}/cvcuda-dev-0.15.0-cuda12-x86_64-linux.deb
-
-RUN set -e; \
-    cd /tmp && \
-    wget -O cvcuda-lib.deb "${CVCUDA_LIB_DEB}" && \
-    wget -O cvcuda-dev.deb "${CVCUDA_DEV_DEB}" && \
-    apt-get update && apt-get install -y ./cvcuda-lib.deb ./cvcuda-dev.deb && \
-    rm -rf /var/lib/apt/lists/* && \
-    test -f /opt/nvidia/cvcuda0/include/nvcv/Tensor.hpp
-
-# Set CV-CUDA environment variables
-ENV CVCUDA_ROOT=/opt/nvidia/cvcuda0
-ENV CMAKE_PREFIX_PATH=$CVCUDA_ROOT:$CMAKE_PREFIX_PATH
-ENV CPLUS_INCLUDE_PATH=$CVCUDA_ROOT/include:$CPLUS_INCLUDE_PATH
-
-# Install VPI (Vision Programming Interface) packages
-RUN set -e; \
-    cd /tmp && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/libn/libnvvpi2/libnvvpi2_2.3.9_amd64.deb && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-dev/vpi2-dev_2.3.9_amd64.deb && \
-    wget https://repo.download.nvidia.com/jetson/x86_64/focal/pool/main/v/vpi2-samples/vpi2-samples_2.3.9_amd64.deb && \
-    apt-get install -y ./libnvvpi2_2.3.9_amd64.deb ./vpi2-dev_2.3.9_amd64.deb ./vpi2-samples_2.3.9_amd64.deb || \
-    apt-get -f install -y && \
-    rm -f *.deb
-
-# Install dependencies
-RUN apt-get update && apt-get install -y git curl wget build-essential
-
-RUN pip install --upgrade pip "setuptools==69.5.1" "wheel>=0.43" && \
-    pip install setuptools_scm warp-lang ninja "numpy==2.2.6" "scipy==1.15.3" "trimesh==4.8.3" yourdfpy && \
-    pip install --no-cache-dir --upgrade "sympy>=1.12" "mpmath>=1.3.0" --ignore-installed
-
-# Install PyTorch (CUDA 12.x compatible)
-RUN pip install --no-cache-dir --ignore-installed torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
-# Install TensorRT
+# ============================================================
+# Locale + utilitários básicos
+# ============================================================
 RUN apt-get update && apt-get install -y \
-    libnvinfer-dev=8.6.1.6-1+cuda12.0 \
-    libnvinfer-headers-plugin-dev=8.6.1.6-1+cuda12.0 \
-    libnvinfer-plugin-dev=8.6.1.6-1+cuda12.0 \
-    libnvonnxparsers-dev=8.6.1.6-1+cuda12.0 \
-    libnvparsers-dev=8.6.1.6-1+cuda12.0
+    locales \
+    curl \
+    wget \
+    git \
+    lsb-release \
+    gnupg \
+    udev \
+    usbutils \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================================
+# Dependências ROS necessárias para ZED
+# ============================================================
+RUN apt-get update && apt-get install -y \
+    ros-humble-image-transport \
+    ros-humble-camera-info-manager \
+    ros-humble-compressed-image-transport \
+    ros-humble-diagnostic-updater \
+    ros-humble-vision-msgs \
+    ros-humble-rviz2 \
+    ros-humble-xacro \
+    ros-humble-robot-state-publisher \
+    ros-humble-joint-state-publisher \
+    ros-humble-magic-enum \
+    python3-colcon-common-extensions \
+    python3-rosdep \
+    python3-vcstool \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================================
+# Instalar ZED SDK Oficial (Ubuntu 22.04 + CUDA 12)
+# ============================================================
+
+# Versão estável
+ENV ZED_SDK_VERSION=5.0
 
 
-# Set working directory
-WORKDIR $WS
+RUN wget -q https://download.stereolabs.com/zedsdk/${ZED_SDK_VERSION}/cu12/ubuntu22 \
+    -O /tmp/ZED_SDK.run && \
+    chmod +x /tmp/ZED_SDK.run && \
+    /tmp/ZED_SDK.run silent skip_tools skip_cuda && \
+    rm -f /tmp/ZED_SDK.run
+
+# ============================================================
+# Variáveis de ambiente ZED
+# ============================================================
+ENV ZED_SDK_ROOT_DIR=/usr/local/zed
+ENV CMAKE_PREFIX_PATH=/usr/local/zed:$CMAKE_PREFIX_PATH
+ENV LD_LIBRARY_PATH=/usr/local/zed/lib:$LD_LIBRARY_PATH
+ENV ISAAC_ROS_WS=/home/spot-teleop/zed_ws:$ISAAC_ROS_WS
+
+# ============================================================
+# Workspace
+# ============================================================
+WORKDIR /home/spot-teleop/zed_ws
+RUN mkdir -p src
+
+# ROS environment
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+
+CMD ["/bin/bash"]

@@ -27,7 +27,10 @@ services:
           echo 'Found existing build, sourcing setup...' &&
           source /home/spot-teleop/spot-ros2_ws/install/setup.bash
         else
-          echo 'No existing build found.'
+          echo 'No existing build found.' &&
+          cd /home/spot-teleop/spot-ros2_ws &&
+          colcon build --symlink-install --cmake-args -DBUILD_TESTING=OFF &&
+          source install/setup.bash
         fi &&
         echo '🎉 Container Spot ROS2 + RealSense pronto! ROS_DOMAIN_ID: 42' &&
         exec bash
@@ -99,7 +102,10 @@ services:
           echo 'Found existing build, sourcing setup...' &&
           source /home/spot-teleop/zed_ws/install/setup.bash
         else
-          echo 'No existing build found. You can build manually with: colcon build --symlink-install'
+          echo 'No existing build found. Building workspace...' &&
+          cd /home/spot-teleop/zed_ws &&
+          colcon build --symlink-install --cmake-args -DBUILD_TESTING=OFF --packages-skip nvblox_examples_bringup &&
+          source install/setup.bash
         fi &&
         echo '🎥 Container ZED + NVBlox pronto! ROS_DOMAIN_ID: 42' &&
         echo 'Para buildar manualmente: colcon build --symlink-install' &&
