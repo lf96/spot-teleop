@@ -44,6 +44,10 @@ add_executable(rubiks_cube_marker_node
   src/rubiks_cube_marker_node.cpp
 )
 
+add_executable(valve_visualization_node
+  src/valve_visualization_node.cpp
+)
+
 target_link_libraries(rqt_interface
   Qt5::Widgets
   ${catkin_LIBRARIES}
@@ -58,11 +62,20 @@ target_link_libraries(rubiks_cube_marker_node
   ${catkin_LIBRARIES}
 )
 
+target_link_libraries(valve_visualization_node
+  ${catkin_LIBRARIES}
+)
+
 add_dependencies(ee_marker_node
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 add_dependencies(rubiks_cube_marker_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+add_dependencies(valve_visualization_node
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )

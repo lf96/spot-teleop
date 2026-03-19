@@ -76,11 +76,11 @@ source /home/spot-teleop/catkin_ws/devel/setup.bash &&
 rosrun rqt_interface ee_marker_node
 "
 
-echo "[GUI] Launching Rubik's cube marker..."
+echo "[GUI] Launching Valve Visualization..."
 $COMPOSE exec -d rqt-interface bash -lc "
 source /opt/ros/noetic/setup.bash &&
 source /home/spot-teleop/catkin_ws/devel/setup.bash &&
-rosrun rqt_interface rubiks_cube_marker_node
+rosrun rqt_interface valve_visualization_node
 "
 
 sleep 5
